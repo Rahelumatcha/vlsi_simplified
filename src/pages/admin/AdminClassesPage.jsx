@@ -569,7 +569,7 @@ export const AdminClassesPage = () => {
                 }}
               >
                 <option value="">Select a Subject</option>
-                {subjects.map((s) => (
+                {(subjects || []).map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
                   </option>

@@ -156,9 +156,9 @@ export const AdminSubjectsPage = () => {
     }
   };
 
-  const filteredSubjects = subjects.filter((s) =>
-    s.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.slug?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredSubjects = (subjects || []).filter((s) =>
+    s?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    s?.slug?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

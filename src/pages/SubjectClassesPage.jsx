@@ -101,13 +101,14 @@ export const SubjectClassesPage = () => {
 
   // Filter classes by search input
   const filteredClasses = useMemo(() => {
-    if (!searchTerm.trim()) return classes;
+    const safeClasses = classes || [];
+    if (!searchTerm.trim()) return safeClasses;
     const term = searchTerm.toLowerCase();
-    return classes.filter(
+    return safeClasses.filter(
       (c) =>
-        c.title?.toLowerCase().includes(term) ||
-        c.description?.toLowerCase().includes(term) ||
-        String(c.classNumber).includes(term)
+        c?.title?.toLowerCase().includes(term) ||
+        c?.description?.toLowerCase().includes(term) ||
+        String(c?.classNumber).includes(term)
     );
   }, [classes, searchTerm]);
 
@@ -128,8 +129,9 @@ export const SubjectClassesPage = () => {
     );
   }
 
-  const totalClasses = classes.length;
-  const completedCount = classes.filter((c) => completedMap[c.id]).length;
+  const safeClasses = classes || [];
+  const totalClasses = safeClasses.length;
+  const completedCount = safeClasses.filter((c) => completedMap[c.id]).length;
   const remainingCount = totalClasses - completedCount;
   const progressPercent = totalClasses > 0 ? Math.round((completedCount / totalClasses) * 100) : 0;
 

@@ -69,9 +69,11 @@ export const courseService = {
    * Do NOT use hardcoded class counts.
    */
   attachDynamicClassCounts(subjects = [], classes = []) {
-    return subjects.map(subject => {
-      const matchingClasses = classes.filter(
-        cls => String(cls.subjectId) === String(subject.id) && Boolean(cls.published)
+    const safeSubjects = Array.isArray(subjects) ? subjects : [];
+    const safeClasses = Array.isArray(classes) ? classes : [];
+    return safeSubjects.map(subject => {
+      const matchingClasses = safeClasses.filter(
+        cls => String(cls?.subjectId) === String(subject?.id) && Boolean(cls?.published)
       );
       return {
         ...subject,

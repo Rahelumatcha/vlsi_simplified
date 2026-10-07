@@ -38,19 +38,21 @@ export const CoursesPage = () => {
 
   // Filter subjects based on search input
   const filteredSubjects = useMemo(() => {
-    if (!searchTerm.trim()) return subjects;
+    const safeSubjects = subjects || [];
+    const safeClasses = classes || [];
+    if (!searchTerm.trim()) return safeSubjects;
     const term = searchTerm.toLowerCase();
 
-    return subjects.filter((subject) => {
-      const matchName = subject.name?.toLowerCase().includes(term);
-      const matchDesc = subject.description?.toLowerCase().includes(term);
+    return safeSubjects.filter((subject) => {
+      const matchName = subject?.name?.toLowerCase().includes(term);
+      const matchDesc = subject?.description?.toLowerCase().includes(term);
 
       // Also match if any of its classes match the search query!
-      const matchClass = classes.some(
+      const matchClass = safeClasses.some(
         (cls) =>
-          String(cls.subjectId) === String(subject.id) &&
-          cls.published &&
-          (cls.title?.toLowerCase().includes(term) || cls.description?.toLowerCase().includes(term))
+          String(cls?.subjectId) === String(subject?.id) &&
+          cls?.published &&
+          (cls?.title?.toLowerCase().includes(term) || cls?.description?.toLowerCase().includes(term))
       );
 
       return matchName || matchDesc || matchClass;
