@@ -118,7 +118,7 @@ export const QuizResult = ({
           <Button variant="primary" icon={RotateCcw} onClick={onRetry}>
             Retry Quiz
           </Button>
-          <Link to="/quiz">
+          <Link to="/quizzes">
             <Button variant="outline" icon={ArrowLeft}>
               Back to Quizzes
             </Button>

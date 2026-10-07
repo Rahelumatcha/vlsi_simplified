@@ -29,14 +29,12 @@ import { APP_CONFIG } from '../config';
 import { Button } from '../components/common/Button';
 import { SubjectCard } from '../components/courses/SubjectCard';
 import { QuizCard } from '../components/quiz/QuizCard';
+import { SubjectQuizCard } from '../components/quiz/SubjectQuizCard';
 import { initialWorkshopsList } from './WorkshopsPage';
 import { courseService } from '../services/courseService';
 import { quizService } from '../services/quizService';
 import { portfolioService } from '../services/portfolioService';
-import staticSubjects from '../data/subjects.json';
-import staticClasses from '../data/classes.json';
-import staticQuizzes from '../data/quizzes.json';
-import staticTrainer from '../data/trainer.json';
+import { publicDataService } from '../services/publicDataService';
 import { initialTrainerProfile } from '../data/initialTrainerProfile';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { SectionCurve } from '../components/common/SectionCurve';
@@ -47,15 +45,17 @@ import { navigateToSection } from '../utils/navigationHelper';
 export const HomePage = () => {
   const [profile, setProfile] = useState(() => ({
     ...initialTrainerProfile,
-    ...staticTrainer
+    ...publicDataService.getCachedTrainer()
   }));
   const [subjects, setSubjects] = useState(() => {
-    const pubSubjects = (staticSubjects || []).filter((s) => s.published !== false);
-    const pubClasses = (staticClasses || []).filter((c) => c.published !== false);
+    const pubSubjects = publicDataService.getCachedSubjects().filter((s) => s.published !== false);
+    const pubClasses = publicDataService.getCachedClasses().filter((c) => c.published !== false);
     return courseService.attachDynamicClassCounts(pubSubjects, pubClasses);
   });
-  const [featuredQuizzes, setFeaturedQuizzes] = useState(() => {
-    return (staticQuizzes || []).filter((q) => q.published !== false).slice(0, 3);
+  const [subjectQuizStats, setSubjectQuizStats] = useState(() => {
+    const pubSubs = publicDataService.getCachedSubjects().filter((s) => s.published !== false);
+    const pubQuizzes = publicDataService.getCachedQuizzes().filter((q) => q.published !== false);
+    return quizService.calculateSubjectQuizStats(pubSubs, pubQuizzes);
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -77,10 +77,11 @@ export const HomePage = () => {
         ]);
 
         const dynamicSubjects = courseService.attachDynamicClassCounts(subjectsData, classesData);
+        const dynamicQuizStats = quizService.calculateSubjectQuizStats(subjectsData, quizzesData);
 
         setProfile(trainerProfile || {});
         setSubjects(dynamicSubjects);
-        setFeaturedQuizzes((quizzesData || []).slice(0, 3));
+        setSubjectQuizStats(dynamicQuizStats);
       } catch (err) {
         console.error('Failed to refresh homepage data:', err);
       }
@@ -786,87 +787,200 @@ export const HomePage = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. QUIZZES PREVIEW (COMING SOON OR DYNAMIC CARDS)                        */}
+      {/* 5. QUIZZES SECTION (SUBJECT-BASED E-LEARNING CARDS)                      */}
       {/* ========================================================================= */}
-      <section id="quizzes" className="container" style={{ scrollMarginTop: '65px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
-          <div>
-            <span
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#0ea5e9',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                display: 'block',
-                marginBottom: '6px'
-              }}
-            >
-              TEST YOUR KNOWLEDGE
-            </span>
-            <h2 className="heading-section" style={{ margin: 0 }}>
-              Technical Topic Quizzes
-            </h2>
-          </div>
+      <section
+        id="quizzes"
+        style={{
+          background: 'linear-gradient(135deg, #072540 0%, #03456c 40%, #0284c7 85%, #0369a1 100%)',
+          padding: '72px 0',
+          position: 'relative',
+          overflow: 'hidden',
+          scrollMarginTop: '65px'
+        }}
+        className="homepage-quiz-section"
+      >
+        {/* Subtle semiconductor circuit matrix dot overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.08) 1.2px, transparent 1.2px)',
+            backgroundSize: '28px 28px',
+            pointerEvents: 'none'
+          }}
+        />
 
-          <Link to="/quiz" style={{ textDecoration: 'none' }}>
-            <Button variant="outline" icon={HelpCircle} iconPosition="left">
-              View All Quizzes
-            </Button>
-          </Link>
-        </div>
+        {/* Ambient luminous glow orbs */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-20%',
+            right: '5%',
+            width: '400px',
+            height: '400px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }}
+        />
 
-        {featuredQuizzes.length === 0 ? (
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+          {/* Section Header */}
           <div
             style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '20px',
-              padding: '48px 32px',
-              border: '2px dashed #bae6fd',
-              boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
-              textAlign: 'center',
               display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '20px',
+              marginBottom: '36px'
             }}
           >
-            <div
-              style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '14px',
-                backgroundColor: '#f0f9ff',
-                color: '#0ea5e9',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '16px',
-                border: '1.5px solid #bae6fd'
-              }}
-            >
-              <HelpCircle size={28} />
+            <div>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '4px 12px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                  color: '#38bdf8',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.04em',
+                  marginBottom: '10px'
+                }}
+              >
+                <Sparkles size={14} color="#38bdf8" />
+                <span>PRACTICE & ASSESSMENTS</span>
+              </div>
+              <h2
+                className="heading-section"
+                style={{
+                  color: '#ffffff',
+                  fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)',
+                  margin: '0 0 8px 0',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+                }}
+              >
+                Test Your Knowledge
+              </h2>
+              <p
+                style={{
+                  color: '#bae6fd',
+                  fontSize: '1rem',
+                  lineHeight: 1.6,
+                  maxWidth: '620px',
+                  margin: 0
+                }}
+              >
+                Challenge yourself and strengthen your VLSI concepts.
+              </p>
             </div>
 
-            <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-              Quizzes Coming Soon
-            </h3>
-            <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '520px', lineHeight: 1.6, marginBottom: '20px' }}>
-              Interactive topic-wise quizzes are currently being curated. Once published by the trainer via the Admin Panel, they will appear right here!
-            </p>
-
-            <a href={APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <Button variant="secondary" icon={Youtube}>
-                Watch Video Classes While Waiting
+            <Link to="/quizzes" style={{ textDecoration: 'none' }}>
+              <Button
+                variant="outline"
+                size="md"
+                icon={ArrowRight}
+                iconPosition="right"
+                style={{
+                  borderColor: 'rgba(56, 189, 248, 0.5)',
+                  color: '#ffffff',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(4px)'
+                }}
+              >
+                View All Quizzes
               </Button>
-            </a>
+            </Link>
           </div>
-        ) : (
-          <div className="grid-cards">
-            {featuredQuizzes.map((quiz) => (
-              <QuizCard key={quiz.id} quiz={quiz} subjectName="VLSI Curriculum" />
-            ))}
-          </div>
-        )}
+
+          {/* Subject Quiz Cards Grid (Max 3 on Homepage) */}
+          {subjectQuizStats.length === 0 ? (
+            <div
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.96)',
+                borderRadius: '20px',
+                padding: '48px 32px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.15)',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}
+            >
+              <div
+                style={{
+                  width: '54px',
+                  height: '54px',
+                  borderRadius: '14px',
+                  backgroundColor: '#f0f9ff',
+                  color: '#0ea5e9',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '16px',
+                  border: '1.5px solid #bae6fd'
+                }}
+              >
+                <HelpCircle size={28} />
+              </div>
+
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+                Quizzes Coming Soon
+              </h3>
+              <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '520px', lineHeight: 1.6, marginBottom: '20px' }}>
+                Interactive topic-wise quizzes are currently being curated. Once published by the trainer via the Admin Panel, they will appear right here!
+              </p>
+
+              <a href={APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                <Button variant="secondary" icon={Youtube}>
+                  Watch Video Classes While Waiting
+                </Button>
+              </a>
+            </div>
+          ) : (
+            <>
+              <div className="grid-cards">
+                {subjectQuizStats.slice(0, 3).map((sub) => (
+                  <SubjectQuizCard
+                    key={sub.id}
+                    subject={sub}
+                    onExplore={() => navigate(`/quizzes?subject=${sub.slug || sub.id}`)}
+                  />
+                ))}
+              </div>
+
+              {/* Length Control: Show View All Quizzes button if more than 3 subjects exist */}
+              {subjectQuizStats.length > 3 && (
+                <div style={{ textAlign: 'center', marginTop: '36px' }}>
+                  <Link to="/quizzes" style={{ textDecoration: 'none' }}>
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      icon={ArrowRight}
+                      iconPosition="right"
+                      style={{
+                        backgroundColor: '#38bdf8',
+                        color: '#082f49',
+                        fontWeight: 700,
+                        border: 'none',
+                        boxShadow: '0 4px 16px rgba(56, 189, 248, 0.35)'
+                      }}
+                    >
+                      View All Quizzes →
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </section>
 
       {/* ========================================================================= */}

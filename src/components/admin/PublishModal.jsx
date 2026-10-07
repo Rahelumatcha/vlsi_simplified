@@ -112,8 +112,8 @@ export const PublishModal = ({ isOpen, onClose, onConfirm, isPublishing }) => {
           <AlertCircle size={16} color="#0284c7" style={{ flexShrink: 0 }} />
           <span>
             {isPublishing
-              ? 'Publish started — syncing data and deploying the website...'
-              : 'This will initiate an automated background build and deployment.'}
+              ? 'Publishing changes and refreshing live caches...'
+              : 'Content changes reflect immediately via live API. If cloud deploy hooks are configured, a background build will also be triggered.'}
           </span>
         </div>
 

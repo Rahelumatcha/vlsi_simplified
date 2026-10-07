@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, RotateCcw, AlertTriangle } from 'lucide-react';
 import { quizService } from '../services/quizService';
-import staticQuizzes from '../data/quizzes.json';
+import { publicDataService } from '../services/publicDataService';
 import { QuizQuestion } from '../components/quiz/QuizQuestion';
 import { QuizTimer } from '../components/quiz/QuizTimer';
 import { QuizResult } from '../components/quiz/QuizResult';
@@ -15,11 +15,7 @@ export const QuizTakePage = () => {
 
   const initialQuiz = React.useMemo(() => {
     if (!id) return null;
-    const found = (staticQuizzes || []).find((q) => String(q.id) === String(id));
-    if (found && Array.isArray(found.questions) && found.questions.length > 0) {
-      return { quiz: found, questions: found.questions };
-    }
-    return null;
+    return publicDataService.getCachedQuiz(id);
   }, [id]);
 
   const [quizData, setQuizData] = useState(initialQuiz);
@@ -30,26 +26,24 @@ export const QuizTakePage = () => {
   const [evalResult, setEvalResult] = useState(null);
 
   useEffect(() => {
-    if (initialQuiz) {
-      setQuizData(initialQuiz);
-      setLoading(false);
-      return;
-    }
-
+    let isMounted = true;
     const fetchQuiz = async () => {
       try {
-        setLoading(true);
+        if (!quizData) setLoading(true);
         const data = await quizService.getQuizById(id);
-        setQuizData(data);
+        if (isMounted && data && Object.keys(userAnswers).length === 0 && !isSubmitted) {
+          setQuizData(data);
+        }
       } catch (err) {
         console.error('Failed to load quiz details:', err);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchQuiz();
-  }, [id, initialQuiz]);
+    return () => { isMounted = false; };
+  }, [id]);
 
   if (loading) {
     return <LoadingSpinner message="Preparing quiz questions..." />;
@@ -150,7 +144,7 @@ export const QuizTakePage = () => {
         }}
       >
         <Link
-          to="/quiz"
+          to="/quizzes"
           style={{
             display: 'inline-flex',
             alignItems: 'center',

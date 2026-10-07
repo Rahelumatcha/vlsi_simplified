@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Plus, Edit2, Trash2, HelpCircle, Eye, EyeOff, Layers, CheckCircle2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, HelpCircle, Eye, EyeOff, Layers, CheckCircle2, RefreshCw, AlertCircle } from 'lucide-react';
 import { quizService } from '../../services/quizService';
 import { courseService } from '../../services/courseService';
 import { Button } from '../../components/common/Button';
@@ -12,9 +12,10 @@ import { EmptyState } from '../../components/common/EmptyState';
 import { useToast } from '../../contexts/ToastContext';
 
 export const AdminQuizzesPage = () => {
-  const [quizzes, setQuizzes] = useState([]);
-  const [subjects, setSubjects] = useState([]);
+  const [quizzes, setQuizzes] = useState(null);
+  const [subjects, setSubjects] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Modal State
@@ -40,6 +41,7 @@ export const AdminQuizzesPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [quizList, subList] = await Promise.all([
         quizService.getQuizzes(true),
         courseService.getSubjects(true)
@@ -47,6 +49,8 @@ export const AdminQuizzesPage = () => {
       setQuizzes(quizList);
       setSubjects(subList);
     } catch (err) {
+      console.error('Failed to load quizzes:', err);
+      setError(err.message || 'Failed to retrieve quizzes from Google Sheets.');
       showError('Failed to load quizzes: ' + err.message);
     } finally {
       setLoading(false);
@@ -59,7 +63,7 @@ export const AdminQuizzesPage = () => {
 
   const subjectMap = useMemo(() => {
     const map = {};
-    subjects.forEach((s) => {
+    (subjects || []).forEach((s) => {
       map[s.id] = s.name;
     });
     return map;
@@ -69,7 +73,7 @@ export const AdminQuizzesPage = () => {
     setEditingQuiz(null);
     setFormData({
       title: '',
-      subjectId: subjects[0]?.id || '',
+      subjectId: '',
       description: '',
       difficulty: 'Intermediate',
       timeLimit: 15,
@@ -159,7 +163,12 @@ export const AdminQuizzesPage = () => {
       return;
     }
     if (!formData.subjectId) {
-      showError('Please select an associated subject.');
+      showError('Please select a subject from the list.');
+      return;
+    }
+    const validSubject = (subjects || []).find((s) => String(s.id) === String(formData.subjectId));
+    if (!validSubject) {
+      showError('The selected subject is invalid or no longer exists. Please choose a valid subject.');
       return;
     }
     if (formData.questions.length === 0) {
@@ -230,7 +239,7 @@ export const AdminQuizzesPage = () => {
     }
   };
 
-  const filteredQuizzes = quizzes.filter(
+  const filteredQuizzes = (quizzes || []).filter(
     (q) =>
       q.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       q.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -249,10 +258,55 @@ export const AdminQuizzesPage = () => {
           </p>
         </div>
 
-        <Button variant="primary" icon={Plus} onClick={openCreateModal}>
-          Add New Quiz
-        </Button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Button variant="ghost" size="sm" icon={RefreshCw} onClick={fetchData} loading={loading}>
+            Refresh
+          </Button>
+          <Button variant="primary" size="sm" icon={Plus} onClick={openCreateModal}>
+            Add New Quiz
+          </Button>
+        </div>
       </div>
+
+      {/* Non-blocking refresh error banner when previous data is preserved */}
+      {error && quizzes !== null && (
+        <div
+          style={{
+            backgroundColor: '#fffbeb',
+            border: '1.5px solid #fde68a',
+            borderRadius: '12px',
+            padding: '14px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            color: '#92400e',
+            boxShadow: '0 2px 6px rgba(217, 119, 6, 0.08)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertCircle size={20} color="#d97706" style={{ flexShrink: 0 }} />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>
+                Unable to refresh quizzes from Google Sheets.
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#b45309' }}>
+                Showing last known quizzes catalog. ({error})
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            icon={RefreshCw}
+            onClick={fetchData}
+            loading={loading}
+            style={{ borderColor: '#d97706', color: '#b45309', flexShrink: 0 }}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
 
       {/* Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
@@ -263,20 +317,46 @@ export const AdminQuizzesPage = () => {
           maxWidth="380px"
         />
         <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-          {filteredQuizzes.length} quizzes found
+          {quizzes ? `${filteredQuizzes.length} quizzes found` : '—'}
         </span>
       </div>
 
-      {/* Data Table */}
-      {loading ? (
-        <LoadingSpinner message="Loading quizzes..." />
+      {/* Data Table / States */}
+      {loading && quizzes === null ? (
+        <div style={{ padding: '60px 0', textAlign: 'center' }}>
+          <LoadingSpinner message="Loading quizzes from Google Sheets..." />
+        </div>
+      ) : error && quizzes === null ? (
+        <div style={{ padding: '40px 20px', maxWidth: '600px', margin: '20px auto', textAlign: 'center' }}>
+          <div
+            style={{
+              backgroundColor: '#fef2f2',
+              border: '1.5px solid #fecaca',
+              borderRadius: '16px',
+              padding: '32px',
+              color: '#991b1b',
+              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.08)'
+            }}
+          >
+            <div style={{ display: 'inline-flex', padding: '12px', borderRadius: '50%', backgroundColor: '#fee2e2', marginBottom: '12px' }}>
+              <AlertCircle size={32} color="#dc2626" />
+            </div>
+            <h3 style={{ margin: '0 0 10px', fontSize: '1.25rem', fontWeight: 800 }}>Unable to Load Quizzes</h3>
+            <p style={{ margin: '0 0 20px', fontSize: '0.9rem', color: '#b91c1c', lineHeight: 1.5 }}>
+              {error}
+            </p>
+            <Button variant="primary" size="md" icon={RefreshCw} onClick={fetchData}>
+              Retry Connection
+            </Button>
+          </div>
+        </div>
       ) : filteredQuizzes.length === 0 ? (
         <EmptyState
           icon={HelpCircle}
-          title="No quizzes found"
-          description="Create your first quiz to evaluate students in Digital Systems or VLSI."
-          actionText="Add New Quiz"
-          onAction={openCreateModal}
+          title={searchTerm.trim() ? "No matching quizzes found" : "No quizzes found"}
+          description={searchTerm.trim() ? `No quizzes match "${searchTerm}".` : "Create your first quiz to evaluate students in Digital Systems or VLSI."}
+          actionText={searchTerm.trim() ? undefined : "Add New Quiz"}
+          onAction={searchTerm.trim() ? undefined : openCreateModal}
         />
       ) : (
         <div
@@ -319,7 +399,11 @@ export const AdminQuizzesPage = () => {
                       </div>
                     </td>
                     <td style={{ padding: '14px 18px', color: '#334155', fontWeight: 600 }}>
-                      {subjectMap[quiz.subjectId] || 'Unassigned'}
+                      {subjectMap[quiz.subjectId] || (
+                        <span style={{ color: '#ef4444', fontStyle: 'italic', fontSize: '0.8rem' }}>
+                          Subject Removed
+                        </span>
+                      )}
                     </td>
                     <td style={{ padding: '14px 18px' }}>
                       <Badge variant="primary" size="sm">
@@ -435,10 +519,10 @@ export const AdminQuizzesPage = () => {
                   outline: 'none'
                 }}
               >
-                <option value="">Select Subject</option>
-                {subjects.map((s) => (
+                <option value="">Select Subject ▼</option>
+                {(subjects || []).map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.name}
+                    {s.name} {!s.published ? '(Unpublished)' : ''}
                   </option>
                 ))}
               </select>

@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { BookOpen, Search, Filter } from 'lucide-react';
 import { courseService } from '../services/courseService';
-import staticSubjects from '../data/subjects.json';
-import staticClasses from '../data/classes.json';
+import { publicDataService } from '../services/publicDataService';
 import { SubjectCard } from '../components/courses/SubjectCard';
 import { SearchBar } from '../components/common/SearchBar';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -10,11 +9,11 @@ import { EmptyState } from '../components/common/EmptyState';
 
 export const CoursesPage = () => {
   const [subjects, setSubjects] = useState(() => {
-    const pubSubjects = (staticSubjects || []).filter((s) => s.published !== false);
-    const pubClasses = (staticClasses || []).filter((c) => c.published !== false);
-    return courseService.attachDynamicClassCounts(pubSubjects, pubClasses);
+    const cachedSubs = publicDataService.getCachedSubjects();
+    const cachedCls = publicDataService.getCachedClasses();
+    return courseService.attachDynamicClassCounts(cachedSubs, cachedCls);
   });
-  const [classes, setClasses] = useState(() => (staticClasses || []).filter((c) => c.published !== false));
+  const [classes, setClasses] = useState(() => publicDataService.getCachedClasses());
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 

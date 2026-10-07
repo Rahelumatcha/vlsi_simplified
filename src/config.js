@@ -13,6 +13,10 @@ export const isApiConfigured = () => {
   );
 };
 
+// Central configuration for short-lived public browser cache (in milliseconds)
+// Keeps the public site fast while refreshing content changes within seconds.
+export const PUBLIC_DATA_CACHE_TTL = 60 * 1000; // 60 seconds (configurable)
+
 // Application-wide Brand & Contact Configuration
 // Easily replace placeholders here with actual trainer assets
 export const APP_CONFIG = {

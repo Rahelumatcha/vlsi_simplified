@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Edit2, Trash2, BookOpen, Layers, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit2, Trash2, BookOpen, Layers, Eye, EyeOff, RefreshCw, AlertCircle } from 'lucide-react';
 import { courseService } from '../../services/courseService';
 import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
@@ -13,9 +13,10 @@ import { useToast } from '../../contexts/ToastContext';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
 export const AdminSubjectsPage = () => {
-  const [subjects, setSubjects] = useState([]);
-  const [classes, setClasses] = useState([]);
+  const [subjects, setSubjects] = useState(null);
+  const [classes, setClasses] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Modal State
@@ -39,6 +40,7 @@ export const AdminSubjectsPage = () => {
   const fetchSubjects = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [subs, clss] = await Promise.all([
         courseService.getSubjects(true),
         courseService.getClasses(null, true)
@@ -47,6 +49,8 @@ export const AdminSubjectsPage = () => {
       setSubjects(dynamicSubs);
       setClasses(clss);
     } catch (err) {
+      console.error('Failed to load subjects:', err);
+      setError(err.message || 'Failed to retrieve subjects from Google Sheets.');
       showError('Failed to load subjects: ' + err.message);
     } finally {
       setLoading(false);
@@ -170,12 +174,55 @@ export const AdminSubjectsPage = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Button variant="primary" icon={Plus} onClick={openCreateModal}>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Button variant="ghost" size="sm" icon={RefreshCw} onClick={fetchSubjects} loading={loading}>
+            Refresh
+          </Button>
+          <Button variant="primary" size="sm" icon={Plus} onClick={openCreateModal}>
             Add New Subject
           </Button>
         </div>
       </div>
+
+      {/* Non-blocking refresh error banner when previous data is preserved */}
+      {error && subjects !== null && (
+        <div
+          style={{
+            backgroundColor: '#fffbeb',
+            border: '1.5px solid #fde68a',
+            borderRadius: '12px',
+            padding: '14px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            color: '#92400e',
+            boxShadow: '0 2px 6px rgba(217, 119, 6, 0.08)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertCircle size={20} color="#d97706" style={{ flexShrink: 0 }} />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>
+                Unable to refresh subjects from Google Sheets.
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#b45309' }}>
+                Showing last known curriculum. ({error})
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            icon={RefreshCw}
+            onClick={fetchSubjects}
+            loading={loading}
+            style={{ borderColor: '#d97706', color: '#b45309', flexShrink: 0 }}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
 
       {/* Search Toolbar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
@@ -186,20 +233,46 @@ export const AdminSubjectsPage = () => {
           maxWidth="380px"
         />
         <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-          {filteredSubjects.length} subjects found
+          {subjects ? `${filteredSubjects.length} subjects found` : '—'}
         </span>
       </div>
 
-      {/* Data Table */}
-      {loading ? (
-        <LoadingSpinner message="Loading subjects..." />
+      {/* Data Table / States */}
+      {loading && subjects === null ? (
+        <div style={{ padding: '60px 0', textAlign: 'center' }}>
+          <LoadingSpinner message="Loading curriculum from Google Sheets..." />
+        </div>
+      ) : error && subjects === null ? (
+        <div style={{ padding: '40px 20px', maxWidth: '600px', margin: '20px auto', textAlign: 'center' }}>
+          <div
+            style={{
+              backgroundColor: '#fef2f2',
+              border: '1.5px solid #fecaca',
+              borderRadius: '16px',
+              padding: '32px',
+              color: '#991b1b',
+              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.08)'
+            }}
+          >
+            <div style={{ display: 'inline-flex', padding: '12px', borderRadius: '50%', backgroundColor: '#fee2e2', marginBottom: '12px' }}>
+              <AlertCircle size={32} color="#dc2626" />
+            </div>
+            <h3 style={{ margin: '0 0 10px', fontSize: '1.25rem', fontWeight: 800 }}>Unable to Load Subjects</h3>
+            <p style={{ margin: '0 0 20px', fontSize: '0.9rem', color: '#b91c1c', lineHeight: 1.5 }}>
+              {error}
+            </p>
+            <Button variant="primary" size="md" icon={RefreshCw} onClick={fetchSubjects}>
+              Retry Connection
+            </Button>
+          </div>
+        </div>
       ) : filteredSubjects.length === 0 ? (
         <EmptyState
           icon={BookOpen}
-          title="No subjects found"
-          description="Create your first subject curriculum to begin adding classes and video lectures."
-          actionText="Add New Subject"
-          onAction={openCreateModal}
+          title={searchTerm.trim() ? "No matching subjects found" : "No subjects found"}
+          description={searchTerm.trim() ? `No subjects match "${searchTerm}".` : "Create your first subject curriculum to begin adding classes and video lectures."}
+          actionText={searchTerm.trim() ? undefined : "Add New Subject"}
+          onAction={searchTerm.trim() ? undefined : openCreateModal}
         />
       ) : (
         <div

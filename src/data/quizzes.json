@@ -25,5 +25,32 @@
         "questionOrder": 1
       }
     ]
+  },
+  {
+    "id": "QZ-MUXWHV4H265",
+    "title": "uvm",
+    "subjectId": "SUB-MUWBBX3C204",
+    "description": "quiz on uvm",
+    "difficulty": "Intermediate",
+    "timeLimit": 5,
+    "published": true,
+    "createdAt": "2026-10-07T09:24:04.457Z",
+    "updatedAt": "2026-10-07T09:24:04.457Z",
+    "questions": [
+      {
+        "id": "QUES-1791364962678-1",
+        "quizId": "QZ-MUXWHV4H265",
+        "question": "what is uvm",
+        "options": [
+          "universal vercel machine",
+          "universal verification machine",
+          "universal verify method",
+          "Universal Verification Methodology"
+        ],
+        "correctAnswer": "D",
+        "explanation": "Universal Verification Methodology",
+        "questionOrder": 1
+      }
+    ]
   }
 ]

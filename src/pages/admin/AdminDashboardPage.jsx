@@ -10,7 +10,8 @@ import {
   Layers,
   ArrowRight,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 import { portfolioService } from '../../services/portfolioService';
 import { publishService } from '../../services/publishService';
@@ -24,10 +25,12 @@ export const AdminDashboardPage = () => {
   const [stats, setStats] = useState(null);
   const [publishStatus, setPublishStatus] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchStats = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [data, pub] = await Promise.all([
         portfolioService.getDashboardStats(),
         publishService.getPublishStatus()
@@ -36,6 +39,7 @@ export const AdminDashboardPage = () => {
       setPublishStatus(pub);
     } catch (err) {
       console.error('Failed to load dashboard stats:', err);
+      setError(err.message || 'Failed to retrieve live metrics from Google Sheets.');
     } finally {
       setLoading(false);
     }
@@ -46,7 +50,39 @@ export const AdminDashboardPage = () => {
   }, []);
 
   if (loading && !stats) {
-    return <LoadingSpinner message="Calculating dashboard statistics..." />;
+    return (
+      <div style={{ padding: '80px 0', textAlign: 'center' }}>
+        <LoadingSpinner message="Loading dashboard... Retrieving live metrics from Google Sheets..." />
+      </div>
+    );
+  }
+
+  if (error && !stats) {
+    return (
+      <div style={{ padding: '40px 20px', maxWidth: '600px', margin: '40px auto', textAlign: 'center' }}>
+        <div
+          style={{
+            backgroundColor: '#fef2f2',
+            border: '1.5px solid #fecaca',
+            borderRadius: '16px',
+            padding: '32px',
+            color: '#991b1b',
+            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.08)'
+          }}
+        >
+          <div style={{ display: 'inline-flex', padding: '12px', borderRadius: '50%', backgroundColor: '#fee2e2', marginBottom: '12px' }}>
+            <AlertCircle size={32} color="#dc2626" />
+          </div>
+          <h3 style={{ margin: '0 0 10px', fontSize: '1.25rem', fontWeight: 800 }}>Unable to Load Live Metrics</h3>
+          <p style={{ margin: '0 0 20px', fontSize: '0.9rem', color: '#b91c1c', lineHeight: 1.5 }}>
+            {error}
+          </p>
+          <Button variant="primary" size="md" icon={RefreshCw} onClick={fetchStats}>
+            Retry Connection
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const s = stats || {
@@ -61,6 +97,46 @@ export const AdminDashboardPage = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {/* Non-blocking refresh error banner when previous data is preserved */}
+      {error && stats && (
+        <div
+          style={{
+            backgroundColor: '#fffbeb',
+            border: '1.5px solid #fde68a',
+            borderRadius: '12px',
+            padding: '14px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            color: '#92400e',
+            boxShadow: '0 2px 6px rgba(217, 119, 6, 0.08)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertCircle size={20} color="#d97706" style={{ flexShrink: 0 }} />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>
+                Unable to refresh. Showing last known data.
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#b45309' }}>
+                {error}
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            icon={RefreshCw}
+            onClick={fetchStats}
+            loading={loading}
+            style={{ borderColor: '#d97706', color: '#b45309', flexShrink: 0 }}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
+
       {/* Top Welcome & Quick Actions */}
       <div
         style={{

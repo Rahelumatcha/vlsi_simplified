@@ -11,17 +11,16 @@ import { apiService } from './apiService';
 import { authService } from './authService';
 import { courseService } from './courseService';
 import { quizService } from './quizService';
-import staticTrainer from '../data/trainer.json';
-import { initialTrainerProfile } from '../data/initialTrainerProfile';
+import { publicDataService } from './publicDataService';
 
 export const portfolioService = {
   /**
    * Fetch trainer profile details
-   * Public requests load instantly from static JSON without waiting for Google Apps Script.
+   * Public requests use hybrid cached API data with static JSON fallback.
    */
   async getTrainerProfile(isAdmin = false) {
     if (!isAdmin) {
-      return { ...staticTrainer };
+      return await publicDataService.getPublicTrainer();
     }
     const profile = await apiService.get('getTrainerProfile');
     return profile || {};
@@ -33,7 +32,9 @@ export const portfolioService = {
   async updateTrainerProfile(profileData) {
     const adminToken = authService.getAdminToken();
     if (!adminToken) throw new Error('Unauthorized: Admin login required.');
-    return await apiService.post('updateTrainerProfile', { data: profileData }, adminToken);
+    const res = await apiService.post('updateTrainerProfile', { data: profileData }, adminToken);
+    publicDataService.clearPublicCache();
+    return res;
   },
 
   /**
@@ -45,6 +46,10 @@ export const portfolioService = {
       courseService.getClasses(null, true),
       quizService.getQuizzes(true)
     ]);
+
+    if (!Array.isArray(subjects) || !Array.isArray(classes) || !Array.isArray(quizzes)) {
+      throw new Error('Incomplete or invalid curriculum data received from Google Sheets.');
+    }
 
     const totalSubjects = subjects.length;
     const totalClasses = classes.length;

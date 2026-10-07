@@ -18,25 +18,32 @@ import {
   Sparkles
 } from 'lucide-react';
 import { portfolioService } from '../services/portfolioService';
-import staticTrainer from '../data/trainer.json';
-import staticSubjects from '../data/subjects.json';
+import { courseService } from '../services/courseService';
+import { publicDataService } from '../services/publicDataService';
 import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { APP_CONFIG } from '../config';
 
 export const AboutPage = () => {
-  const [profile, setProfile] = useState(() => ({ ...staticTrainer }));
+  const [profile, setProfile] = useState(() => publicDataService.getCachedTrainer());
+  const [subjects, setSubjects] = useState(() => (publicDataService.getCachedSubjects() || []).filter((s) => s.published !== false));
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const refreshProfile = async () => {
       try {
-        const data = await portfolioService.getTrainerProfile();
-        if (data) {
-          setProfile(data);
+        const [profileData, subjectsData] = await Promise.all([
+          portfolioService.getTrainerProfile(),
+          courseService.getSubjects()
+        ]);
+        if (profileData) {
+          setProfile(profileData);
+        }
+        if (subjectsData) {
+          setSubjects((subjectsData || []).filter((s) => s.published !== false));
         }
       } catch (err) {
-        console.error('Failed to refresh profile:', err);
+        console.error('Failed to refresh profile or subjects:', err);
       }
     };
     refreshProfile();
@@ -237,7 +244,7 @@ export const AboutPage = () => {
         </div>
 
         <div className="grid-cards-4">
-          {(staticSubjects || []).filter((s) => s.published !== false).map((sub) => (
+          {(subjects || []).filter((s) => s.published !== false).map((sub) => (
             <div
               key={sub.id}
               style={{

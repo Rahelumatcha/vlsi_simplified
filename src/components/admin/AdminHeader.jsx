@@ -18,9 +18,9 @@ export const AdminHeader = ({ title, subtitle, onToggleSidebar }) => {
       const result = await publishService.triggerPublish();
       if (result && result.success) {
         if (result.details?.method === 'standalone') {
-          showError('Publish recorded in Google Sheets, but DEPLOY_HOOK_URL is not set in Apps Script Script Properties. Cloud deployment was not triggered.');
+          showSuccess('Published! Changes are live on the website via real-time API sync.');
         } else {
-          showSuccess(result.message || 'Publish started — changes will be live after deployment completes.');
+          showSuccess(result.message || 'Published! Changes are live on the website.');
         }
         setIsModalOpen(false);
       } else {

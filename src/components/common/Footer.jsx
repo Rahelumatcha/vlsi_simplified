@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Youtube, Linkedin, MessageCircle, Mail, Shield, ExternalLink } from 'lucide-react';
 import { APP_CONFIG } from '../../config';
-
-import staticSubjects from '../../data/subjects.json';
+import { publicDataService } from '../../services/publicDataService';
+import { courseService } from '../../services/courseService';
 
 export const Footer = () => {
-  const publishedSubjects = (staticSubjects || []).filter((s) => s.published !== false);
+  const [publishedSubjects, setPublishedSubjects] = useState(() =>
+    (publicDataService.getCachedSubjects() || []).filter((s) => s.published !== false)
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+    courseService.getSubjects().then((subs) => {
+      if (isMounted && Array.isArray(subs)) {
+        setPublishedSubjects(subs.filter((s) => s.published !== false));
+      }
+    }).catch(() => {});
+    return () => { isMounted = false; };
+  }, []);
   return (
     <footer
       style={{
@@ -157,7 +169,7 @@ export const Footer = () => {
                 <Link to="/courses" className="footer-link">All Courses</Link>
               </li>
               <li>
-                <Link to="/quiz" className="footer-link">Quizzes & Practice</Link>
+                <Link to="/quizzes" className="footer-link">Quizzes & Practice</Link>
               </li>
               <li>
                 <Link to="/workshops" className="footer-link">Workshops</Link>

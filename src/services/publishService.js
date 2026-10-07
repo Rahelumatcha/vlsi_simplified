@@ -10,6 +10,7 @@
 
 import { apiService } from './apiService';
 import { authService } from './authService';
+import { publicDataService } from './publicDataService';
 
 export const publishService = {
   /**
@@ -48,6 +49,7 @@ export const publishService = {
     }
 
     const response = await apiService.post('publish', {}, adminToken);
+    publicDataService.clearPublicCache();
     return response;
   }
 };

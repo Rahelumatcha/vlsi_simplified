@@ -297,9 +297,18 @@ function doGet(e) {
       return createJsonResponse({ success: true, data: profile });
     }
 
-    return createJsonResponse({ success: false, error: 'Unknown action: ' + action });
+    return createJsonResponse({
+      success: false,
+      error: 'Unknown action: ' + action,
+      message: 'Unknown action: ' + action
+    });
   } catch (error) {
-    return createJsonResponse({ success: false, error: error.toString() });
+    var errMsg = error && error.message ? error.message : error.toString();
+    return createJsonResponse({
+      success: false,
+      error: errMsg,
+      message: errMsg
+    });
   }
 }
 
@@ -365,7 +374,7 @@ function doPost(e) {
 
         var publishMessage = 'Publish started — changes will be live after deployment completes.';
         if (triggerResult.method === 'standalone') {
-          publishMessage = 'Publish recorded. Notice: No DEPLOY_HOOK_URL or GITHUB_TOKEN configured in Apps Script Script Properties. Automatic cloud rebuild was not triggered.';
+          publishMessage = 'Publish recorded. Live website will reflect changes immediately via API.';
         }
 
         return createJsonResponse({
@@ -636,9 +645,18 @@ function doPost(e) {
       return createJsonResponse({ success: true, message: 'Trainer profile updated.' });
     }
 
-    return createJsonResponse({ success: false, error: 'Unknown POST action: ' + action });
+    return createJsonResponse({
+      success: false,
+      error: 'Unknown POST action: ' + action,
+      message: 'Unknown POST action: ' + action
+    });
   } catch (error) {
-    return createJsonResponse({ success: false, error: error.toString() });
+    var errMsg = error && error.message ? error.message : error.toString();
+    return createJsonResponse({
+      success: false,
+      error: errMsg,
+      message: errMsg
+    });
   }
 }
 

@@ -30,9 +30,12 @@ let devLastPublishedAt = new Date().toISOString();
 const apiCache = new Map();
 const CACHE_TTL_MS = 60 * 1000; // 60 seconds
 
+// Deduplication map for concurrent in-flight GET requests
+const inFlightRequests = new Map();
+
 class ApiService {
   /**
-   * Helper to make GET requests to Google Apps Script with smart caching & timeout
+   * Helper to make GET requests to Google Apps Script with smart caching, deduplication & robust error handling
    */
   async get(action, params = {}, bypassCache = false) {
     if (!isApiConfigured()) {
@@ -42,7 +45,7 @@ class ApiService {
     const isAdmin = Boolean(params.adminToken);
     const cacheKey = `${action}_${JSON.stringify(params)}`;
 
-    // Return cached response if valid (public student requests only)
+    // Return cached response if valid (public requests only; admin always bypasses cache)
     if (!isAdmin && !bypassCache && apiCache.has(cacheKey)) {
       const entry = apiCache.get(cacheKey);
       if (Date.now() - entry.timestamp < CACHE_TTL_MS) {
@@ -50,45 +53,74 @@ class ApiService {
       }
     }
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12-second safety timeout
-
-    try {
-      const url = new URL(API_BASE_URL);
-      url.searchParams.set('action', action);
-      Object.keys(params).forEach(key => {
-        if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
-          url.searchParams.set(key, params[key]);
-        }
-      });
-
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || 'Server error occurred');
-      }
-
-      // Store successful public response in cache
-      if (!isAdmin) {
-        apiCache.set(cacheKey, { timestamp: Date.now(), data: result.data });
-      }
-
-      return result.data;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      console.warn(`[ApiService] Live fetch failed or timed out for action "${action}". Falling back to cached data.`, error.message);
-      return this.handleDevFallbackGet(action, params);
+    // Deduplicate simultaneous identical requests in flight
+    if (inFlightRequests.has(cacheKey)) {
+      return inFlightRequests.get(cacheKey);
     }
+
+    const requestPromise = (async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25-second timeout for cold starts
+
+      try {
+        const url = new URL(API_BASE_URL);
+        url.searchParams.set('action', action);
+        Object.keys(params).forEach(key => {
+          if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+            url.searchParams.set(key, params[key]);
+          }
+        });
+
+        const response = await fetch(url.toString(), {
+          method: 'GET',
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`API HTTP error ${response.status}: ${response.statusText || 'Request failed'}`);
+        }
+
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (parseErr) {
+          throw new Error(`Invalid JSON received from API: ${text.slice(0, 150)}`);
+        }
+
+        if (!result || typeof result !== 'object') {
+          throw new Error('API returned an empty or invalid response format.');
+        }
+
+        if (result.success === false) {
+          throw new Error(result.error || result.message || 'API operation returned error status.');
+        }
+
+        // Cache successful public response
+        if (!isAdmin) {
+          apiCache.set(cacheKey, { timestamp: Date.now(), data: result.data });
+        }
+
+        return result.data;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        const isAbort = error.name === 'AbortError';
+        const errorMsg = isAbort
+          ? `Request timed out after 25s (action: ${action}). Google Apps Script may be waking up.`
+          : error.message;
+
+        console.error(`[ApiService] Request failed for action "${action}":`, errorMsg);
+        // CRITICAL: When API is configured, NEVER swallow errors or return empty arrays!
+        throw new Error(errorMsg);
+      } finally {
+        inFlightRequests.delete(cacheKey);
+      }
+    })();
+
+    inFlightRequests.set(cacheKey, requestPromise);
+    return requestPromise;
   }
 
   /**
@@ -96,6 +128,7 @@ class ApiService {
    */
   clearCache() {
     apiCache.clear();
+    inFlightRequests.clear();
   }
 
   /**
@@ -106,6 +139,9 @@ class ApiService {
     if (!isApiConfigured()) {
       return this.handleDevFallbackPost(action, payload, adminToken);
     }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
 
     try {
       const bodyData = {
@@ -119,16 +155,30 @@ class ApiService {
         headers: {
           'Content-Type': 'text/plain;charset=utf-8'
         },
-        body: JSON.stringify(bodyData)
+        body: JSON.stringify(bodyData),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
+        throw new Error(`API HTTP error ${response.status}: ${response.statusText || 'Mutation failed'}`);
       }
 
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.error || 'Server rejected mutation');
+      const text = await response.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseErr) {
+        throw new Error(`Invalid JSON received from mutation API: ${text.slice(0, 150)}`);
+      }
+
+      if (!result || typeof result !== 'object') {
+        throw new Error('API returned an empty or invalid mutation response format.');
+      }
+
+      if (result.success === false) {
+        throw new Error(result.error || result.message || 'Mutation rejected by server.');
       }
 
       // Clear cache so mutations are immediately reflected across the website
@@ -136,8 +186,14 @@ class ApiService {
 
       return result;
     } catch (error) {
-      console.error(`[ApiService] POST failed for action "${action}":`, error);
-      throw error;
+      clearTimeout(timeoutId);
+      const isAbort = error.name === 'AbortError';
+      const errorMsg = isAbort
+        ? `Mutation timed out after 25s (action: ${action}).`
+        : error.message;
+
+      console.error(`[ApiService] POST failed for action "${action}":`, errorMsg);
+      throw new Error(errorMsg);
     }
   }
 

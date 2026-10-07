@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Plus, Edit2, Trash2, Youtube, FileText, ExternalLink, Eye, EyeOff, GraduationCap } from 'lucide-react';
+import { Plus, Edit2, Trash2, Youtube, FileText, ExternalLink, Eye, EyeOff, GraduationCap, RefreshCw, AlertCircle } from 'lucide-react';
 import { courseService } from '../../services/courseService';
 import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
@@ -13,9 +13,10 @@ import { useToast } from '../../contexts/ToastContext';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
 export const AdminClassesPage = () => {
-  const [classes, setClasses] = useState([]);
-  const [subjects, setSubjects] = useState([]);
+  const [classes, setClasses] = useState(null);
+  const [subjects, setSubjects] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Filters
   const [selectedSubjectId, setSelectedSubjectId] = useState('ALL');
@@ -46,6 +47,7 @@ export const AdminClassesPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
       const [classList, subjectList] = await Promise.all([
         courseService.getClasses(null, true),
         courseService.getSubjects(true)
@@ -53,6 +55,8 @@ export const AdminClassesPage = () => {
       setClasses(classList);
       setSubjects(subjectList);
     } catch (err) {
+      console.error('Failed to load classes:', err);
+      setError(err.message || 'Failed to retrieve classes from Google Sheets.');
       showError('Failed to load classes: ' + err.message);
     } finally {
       setLoading(false);
@@ -65,7 +69,7 @@ export const AdminClassesPage = () => {
 
   const subjectMap = useMemo(() => {
     const map = {};
-    subjects.forEach((s) => {
+    (subjects || []).forEach((s) => {
       map[s.id] = s.name;
     });
     return map;
@@ -74,8 +78,10 @@ export const AdminClassesPage = () => {
   const openCreateModal = () => {
     setEditingClass(null);
     // Find highest class number for current or first subject
-    const defaultSub = selectedSubjectId !== 'ALL' ? selectedSubjectId : subjects[0]?.id || '';
-    const existingForSub = classes.filter((c) => String(c.subjectId) === String(defaultSub));
+    const subList = subjects || [];
+    const clsList = classes || [];
+    const defaultSub = selectedSubjectId !== 'ALL' ? selectedSubjectId : subList[0]?.id || '';
+    const existingForSub = clsList.filter((c) => String(c.subjectId) === String(defaultSub));
     const nextNumber = existingForSub.length + 1;
 
     setFormData({
@@ -187,7 +193,7 @@ export const AdminClassesPage = () => {
   };
 
   // Filtered classes
-  const filteredClasses = classes.filter((cls) => {
+  const filteredClasses = (classes || []).filter((cls) => {
     const matchSub = selectedSubjectId === 'ALL' || String(cls.subjectId) === String(selectedSubjectId);
     const matchStatus =
       selectedStatus === 'ALL' ||
@@ -213,10 +219,55 @@ export const AdminClassesPage = () => {
           </p>
         </div>
 
-        <Button variant="primary" icon={Plus} onClick={openCreateModal}>
-          Add New Class
-        </Button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <Button variant="ghost" size="sm" icon={RefreshCw} onClick={fetchData} loading={loading}>
+            Refresh
+          </Button>
+          <Button variant="primary" size="sm" icon={Plus} onClick={openCreateModal}>
+            Add New Class
+          </Button>
+        </div>
       </div>
+
+      {/* Non-blocking refresh error banner when previous data is preserved */}
+      {error && classes !== null && (
+        <div
+          style={{
+            backgroundColor: '#fffbeb',
+            border: '1.5px solid #fde68a',
+            borderRadius: '12px',
+            padding: '14px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            color: '#92400e',
+            boxShadow: '0 2px 6px rgba(217, 119, 6, 0.08)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <AlertCircle size={20} color="#d97706" style={{ flexShrink: 0 }} />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>
+                Unable to refresh classes from Google Sheets.
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#b45309' }}>
+                Showing last known classes catalog. ({error})
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            icon={RefreshCw}
+            onClick={fetchData}
+            loading={loading}
+            style={{ borderColor: '#d97706', color: '#b45309', flexShrink: 0 }}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
 
       {/* Filter Toolbar */}
       <div
@@ -255,7 +306,7 @@ export const AdminClassesPage = () => {
             }}
           >
             <option value="ALL">All Subjects</option>
-            {subjects.map((s) => (
+            {(subjects || []).map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
               </option>
@@ -282,21 +333,47 @@ export const AdminClassesPage = () => {
           </select>
 
           <span style={{ fontSize: '0.825rem', color: '#64748b', fontWeight: 600 }}>
-            {filteredClasses.length} of {classes.length} classes
+            {classes ? `${filteredClasses.length} of ${classes.length} classes` : '—'}
           </span>
         </div>
       </div>
 
-      {/* Data Table */}
-      {loading ? (
-        <LoadingSpinner message="Loading classes catalog..." />
+      {/* Data Table / States */}
+      {loading && classes === null ? (
+        <div style={{ padding: '60px 0', textAlign: 'center' }}>
+          <LoadingSpinner message="Loading classes catalog from Google Sheets..." />
+        </div>
+      ) : error && classes === null ? (
+        <div style={{ padding: '40px 20px', maxWidth: '600px', margin: '20px auto', textAlign: 'center' }}>
+          <div
+            style={{
+              backgroundColor: '#fef2f2',
+              border: '1.5px solid #fecaca',
+              borderRadius: '16px',
+              padding: '32px',
+              color: '#991b1b',
+              boxShadow: '0 4px 12px rgba(239, 68, 68, 0.08)'
+            }}
+          >
+            <div style={{ display: 'inline-flex', padding: '12px', borderRadius: '50%', backgroundColor: '#fee2e2', marginBottom: '12px' }}>
+              <AlertCircle size={32} color="#dc2626" />
+            </div>
+            <h3 style={{ margin: '0 0 10px', fontSize: '1.25rem', fontWeight: 800 }}>Unable to Load Classes</h3>
+            <p style={{ margin: '0 0 20px', fontSize: '0.9rem', color: '#b91c1c', lineHeight: 1.5 }}>
+              {error}
+            </p>
+            <Button variant="primary" size="md" icon={RefreshCw} onClick={fetchData}>
+              Retry Connection
+            </Button>
+          </div>
+        </div>
       ) : filteredClasses.length === 0 ? (
         <EmptyState
           icon={GraduationCap}
-          title="No classes found"
-          description="Create your first class by linking a YouTube URL and optional Google Drive notes."
-          actionText="Add New Class"
-          onAction={openCreateModal}
+          title={searchTerm.trim() || selectedSubjectId !== 'ALL' || selectedStatus !== 'ALL' ? "No matching classes found" : "No classes found"}
+          description={searchTerm.trim() || selectedSubjectId !== 'ALL' || selectedStatus !== 'ALL' ? "No classes match your search or filter criteria." : "Create your first class by linking a YouTube URL and optional Google Drive notes."}
+          actionText={searchTerm.trim() || selectedSubjectId !== 'ALL' || selectedStatus !== 'ALL' ? undefined : "Add New Class"}
+          onAction={searchTerm.trim() || selectedSubjectId !== 'ALL' || selectedStatus !== 'ALL' ? undefined : openCreateModal}
         />
       ) : (
         <div

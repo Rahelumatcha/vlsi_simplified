@@ -2,8 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Layers, Search, Video, CheckCircle2, RotateCcw } from 'lucide-react';
 import { courseService } from '../services/courseService';
-import staticSubjects from '../data/subjects.json';
-import staticClasses from '../data/classes.json';
+import { publicDataService } from '../services/publicDataService';
 import { ClassCard } from '../components/courses/ClassCard';
 import { SearchBar } from '../components/common/SearchBar';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
@@ -14,12 +13,13 @@ import { Button } from '../components/common/Button';
 export const SubjectClassesPage = () => {
   const { slug } = useParams();
 
-  // Find subject synchronously from static JSON
+  // Find subject synchronously from cache or static JSON fallback
   const initialSubject = useMemo(() => {
     if (!slug) return null;
     const cleanSlug = String(slug).toLowerCase().trim();
+    const allSubjects = publicDataService.getCachedSubjects();
     return (
-      (staticSubjects || []).find(
+      allSubjects.find(
         (s) =>
           (s.slug || '').toLowerCase().trim() === cleanSlug ||
           String(s.id).toLowerCase() === cleanSlug ||
@@ -30,9 +30,7 @@ export const SubjectClassesPage = () => {
 
   const initialClasses = useMemo(() => {
     if (!initialSubject) return [];
-    return (staticClasses || []).filter(
-      (c) => c.published !== false && String(c.subjectId) === String(initialSubject.id)
-    );
+    return publicDataService.getCachedClasses(initialSubject.id);
   }, [initialSubject]);
 
   const [subject, setSubject] = useState(initialSubject);

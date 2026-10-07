@@ -9,21 +9,23 @@
 
 import { apiService } from './apiService';
 import { authService } from './authService';
-import staticSubjects from '../data/subjects.json';
-import staticClasses from '../data/classes.json';
+import { publicDataService } from './publicDataService';
 
 export const courseService = {
   /**
    * Fetch all subjects (filtered by published for public students)
-   * Public requests load instantly from static JSON without waiting for Google Apps Script.
+   * Public requests use hybrid cached API data with static JSON fallback.
    */
   async getSubjects(isAdmin = false) {
     if (!isAdmin) {
-      return (staticSubjects || []).filter(s => s.published !== false);
+      return await publicDataService.getPublicSubjects();
     }
     const adminToken = authService.getAdminToken();
     const subjects = await apiService.get('getSubjects', { adminToken });
-    return subjects || [];
+    if (!Array.isArray(subjects)) {
+      throw new Error('Expected subjects array from Google Sheets, received invalid format');
+    }
+    return subjects;
   },
 
   /**
@@ -45,22 +47,21 @@ export const courseService = {
 
   /**
    * Fetch classes, optionally filtered by subjectId
-   * Public requests load instantly from static JSON without waiting for Google Apps Script.
+   * Public requests use hybrid cached API data with static JSON fallback.
    */
   async getClasses(subjectId = null, isAdmin = false) {
     if (!isAdmin) {
-      let list = (staticClasses || []).filter(c => c.published !== false);
-      if (subjectId) {
-        list = list.filter(c => String(c.subjectId) === String(subjectId));
-      }
-      return list;
+      return await publicDataService.getPublicClasses(subjectId);
     }
 
     const adminToken = authService.getAdminToken();
     const params = { adminToken };
     if (subjectId) params.subjectId = subjectId;
     const classes = await apiService.get('getClasses', params);
-    return classes || [];
+    if (!Array.isArray(classes)) {
+      throw new Error('Expected classes array from Google Sheets, received invalid format');
+    }
+    return classes;
   },
 
   /**
@@ -111,11 +112,14 @@ export const courseService = {
       throw new Error('Subject slug is required.');
     }
 
+    let res;
     if (subjectData.id) {
-      return await apiService.post('updateSubject', { id: subjectData.id, data: subjectData }, adminToken);
+      res = await apiService.post('updateSubject', { id: subjectData.id, data: subjectData }, adminToken);
     } else {
-      return await apiService.post('createSubject', { data: subjectData }, adminToken);
+      res = await apiService.post('createSubject', { data: subjectData }, adminToken);
     }
+    publicDataService.clearPublicCache();
+    return res;
   },
 
   /**
@@ -124,7 +128,9 @@ export const courseService = {
   async deleteSubject(subjectId) {
     const adminToken = authService.getAdminToken();
     if (!adminToken) throw new Error('Unauthorized: Admin login required.');
-    return await apiService.post('deleteSubject', { id: subjectId }, adminToken);
+    const res = await apiService.post('deleteSubject', { id: subjectId }, adminToken);
+    publicDataService.clearPublicCache();
+    return res;
   },
 
   /**
@@ -147,11 +153,14 @@ export const courseService = {
       throw new Error('Please enter a valid Google Drive link (e.g., https://drive.google.com/...).');
     }
 
+    let res;
     if (classData.id) {
-      return await apiService.post('updateClass', { id: classData.id, data: classData }, adminToken);
+      res = await apiService.post('updateClass', { id: classData.id, data: classData }, adminToken);
     } else {
-      return await apiService.post('createClass', { data: classData }, adminToken);
+      res = await apiService.post('createClass', { data: classData }, adminToken);
     }
+    publicDataService.clearPublicCache();
+    return res;
   },
 
   /**
@@ -160,6 +169,8 @@ export const courseService = {
   async deleteClass(classId) {
     const adminToken = authService.getAdminToken();
     if (!adminToken) throw new Error('Unauthorized: Admin login required.');
-    return await apiService.post('deleteClass', { id: classId }, adminToken);
+    const res = await apiService.post('deleteClass', { id: classId }, adminToken);
+    publicDataService.clearPublicCache();
+    return res;
   }
 };

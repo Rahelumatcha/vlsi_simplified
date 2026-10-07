@@ -9,20 +9,23 @@
 
 import { apiService } from './apiService';
 import { authService } from './authService';
-import staticQuizzes from '../data/quizzes.json';
+import { publicDataService } from './publicDataService';
 
 export const quizService = {
   /**
    * Fetch all quizzes (filtered by published for public students)
-   * Public requests load instantly from static JSON without waiting for Google Apps Script.
+   * Public requests use hybrid cached API data with static JSON fallback.
    */
   async getQuizzes(isAdmin = false) {
     if (!isAdmin) {
-      return (staticQuizzes || []).filter(q => q.published !== false);
+      return await publicDataService.getPublicQuizzes();
     }
     const adminToken = authService.getAdminToken();
     const quizzes = await apiService.get('getQuizzes', { adminToken });
-    return quizzes || [];
+    if (!Array.isArray(quizzes)) {
+      throw new Error('Expected quizzes array from Google Sheets, received invalid format');
+    }
+    return quizzes;
   },
 
   /**
@@ -32,23 +35,7 @@ export const quizService = {
     if (!quizId) throw new Error('Quiz ID is required.');
 
     if (!isAdmin) {
-      const found = (staticQuizzes || []).find(q => String(q.id) === String(quizId));
-      if (found && Array.isArray(found.questions) && found.questions.length > 0) {
-        return {
-          quiz: {
-            id: found.id,
-            title: found.title,
-            subjectId: found.subjectId,
-            description: found.description,
-            difficulty: found.difficulty,
-            timeLimit: found.timeLimit,
-            published: found.published,
-            createdAt: found.createdAt,
-            updatedAt: found.updatedAt
-          },
-          questions: found.questions
-        };
-      }
+      return await publicDataService.getPublicQuiz(quizId);
     }
 
     const data = await apiService.get('getQuiz', { id: quizId });
@@ -69,11 +56,14 @@ export const quizService = {
       throw new Error('Please select an associated subject.');
     }
 
+    let res;
     if (quizData.id) {
-      return await apiService.post('updateQuiz', { id: quizData.id, data: quizData }, adminToken);
+      res = await apiService.post('updateQuiz', { id: quizData.id, data: quizData }, adminToken);
     } else {
-      return await apiService.post('createQuiz', { data: quizData }, adminToken);
+      res = await apiService.post('createQuiz', { data: quizData }, adminToken);
     }
+    publicDataService.clearPublicCache();
+    return res;
   },
 
   /**
@@ -82,7 +72,9 @@ export const quizService = {
   async deleteQuiz(quizId) {
     const adminToken = authService.getAdminToken();
     if (!adminToken) throw new Error('Unauthorized: Admin login required.');
-    return await apiService.post('deleteQuiz', { id: quizId }, adminToken);
+    const res = await apiService.post('deleteQuiz', { id: quizId }, adminToken);
+    publicDataService.clearPublicCache();
+    return res;
   },
 
   /**
@@ -129,5 +121,49 @@ export const quizService = {
       passed,
       breakdown
     };
+  },
+
+  /**
+   * Group and calculate quiz statistics per subject
+   * Every published subject produces a Quiz Course Card, even if quizCount is 0.
+   * @param {Array} subjects - List of subjects
+   * @param {Array} quizzes - List of published quizzes
+   * @returns {Array} List of all published subjects, enriched with quiz counts and difficulty stats
+   */
+  calculateSubjectQuizStats(subjects = [], quizzes = []) {
+    const pubQuizzes = (quizzes || []).filter(q => q.published !== false);
+    
+    return (subjects || [])
+      .filter(s => s.published !== false)
+      .map(subject => {
+        const matchingQuizzes = pubQuizzes.filter(q => String(q.subjectId) === String(subject.id));
+        const beginnerCount = matchingQuizzes.filter(q => String(q.difficulty || '').toLowerCase() === 'beginner').length;
+        const intermediateCount = matchingQuizzes.filter(q => String(q.difficulty || '').toLowerCase() === 'intermediate').length;
+        const advancedCount = matchingQuizzes.filter(q => String(q.difficulty || '').toLowerCase() === 'advanced').length;
+        
+        return {
+          ...subject,
+          subjectId: subject.id,
+          name: subject.name,
+          slug: subject.slug,
+          description: subject.description,
+          thumbnailUrl: subject.thumbnailUrl,
+          totalQuizCount: matchingQuizzes.length,
+          quizCount: matchingQuizzes.length,
+          beginnerCount,
+          intermediateCount,
+          advancedCount,
+          quizzes: matchingQuizzes
+        };
+      });
+  },
+
+  /**
+   * Find any published quizzes that do not match an existing active subject
+   */
+  getOrphanedQuizzes(subjects = [], quizzes = []) {
+    const pubQuizzes = (quizzes || []).filter(q => q.published !== false);
+    const subjectIds = new Set((subjects || []).map(s => String(s.id)));
+    return pubQuizzes.filter(q => !subjectIds.has(String(q.subjectId)));
   }
 };

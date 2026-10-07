@@ -10,7 +10,7 @@
     "notesUrl": "https://drive.google.com/file/d/1_SxSYQkbMV-vD2JbAnnl-ZVL6nxC-SaK/view?usp=sharing",
     "published": true,
     "createdAt": "2026-10-05T10:52:31.222Z",
-    "updatedAt": "2026-10-06T06:44:28.024Z"
+    "updatedAt": "2026-10-07T09:44:07.707Z"
   },
   {
     "id": "CLS-MUWC7ML5454",
@@ -39,6 +39,19 @@
     "updatedAt": "2026-10-06T08:42:02.681Z"
   },
   {
+    "id": "CLS-MUXRNSY6360",
+    "subjectId": "SUB-MUXQIOY5093",
+    "classNumber": 1,
+    "title": "Intro to python",
+    "description": "history , features",
+    "youtubeUrl": "https://youtu.be/1RtdCVtyFLA?si=5D9IJB-UaWwuqZ43",
+    "thumbnailUrl": "",
+    "notesUrl": "",
+    "published": true,
+    "createdAt": "2026-10-07T07:08:44.053Z",
+    "updatedAt": "2026-10-07T07:08:44.053Z"
+  },
+  {
     "id": "CLS-MUWGA8E0699",
     "subjectId": "SUB-MUV4PLRU117",
     "classNumber": 2,
@@ -50,5 +63,44 @@
     "published": true,
     "createdAt": "2026-10-06T09:02:28.945Z",
     "updatedAt": "2026-10-06T09:02:28.945Z"
+  },
+  {
+    "id": "CLS-MUXWD4DZ351",
+    "subjectId": "SUB-MUV664R6796",
+    "classNumber": 2,
+    "title": "sv",
+    "description": "system verilog",
+    "youtubeUrl": "https://youtu.be/BGxvyjO-Bbg?si=jQLR-GjGxEjAeuRD",
+    "thumbnailUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_1ZlSYcUqT25uxL41dKz1KsULE2KlM-XGYJXYtkAz1e9mV8FA1cZfu-wK&s=10",
+    "notesUrl": "",
+    "published": true,
+    "createdAt": "2026-10-07T09:20:23.729Z",
+    "updatedAt": "2026-10-07T09:20:23.729Z"
+  },
+  {
+    "id": "CLS-MUXQBXF1655",
+    "subjectId": "SUB-MUV4PLRU117",
+    "classNumber": 3,
+    "title": "Number Systems",
+    "description": "numbersss",
+    "youtubeUrl": "https://youtu.be/BGxvyjO-Bbg?si=4t8vfvQerRhWrlAx",
+    "thumbnailUrl": "",
+    "notesUrl": "",
+    "published": true,
+    "createdAt": "2026-10-07T06:31:30.240Z",
+    "updatedAt": "2026-10-07T06:31:30.240Z"
+  },
+  {
+    "id": "CLS-MUXX6D96195",
+    "subjectId": "SUB-MUV4PLRU117",
+    "classNumber": 4,
+    "title": "Intro",
+    "description": "bghfgbb",
+    "youtubeUrl": "https://youtu.be/9VabZ6Zze0o?si=60yMnI3FieuTGUks",
+    "thumbnailUrl": "",
+    "notesUrl": "",
+    "published": true,
+    "createdAt": "2026-10-07T09:43:07.250Z",
+    "updatedAt": "2026-10-07T09:43:07.250Z"
   }
 ]

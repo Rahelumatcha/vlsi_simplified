@@ -84,6 +84,10 @@ export default function App() {
             />
             <Route
               path="/quiz"
+              element={<Navigate to="/quizzes" replace />}
+            />
+            <Route
+              path="/quizzes"
               element={
                 <PublicLayout>
                   <QuizListPage />
@@ -92,6 +96,14 @@ export default function App() {
             />
             <Route
               path="/quiz/:id"
+              element={
+                <PublicLayout>
+                  <QuizTakePage />
+                </PublicLayout>
+              }
+            />
+            <Route
+              path="/quizzes/:id"
               element={
                 <PublicLayout>
                   <QuizTakePage />
