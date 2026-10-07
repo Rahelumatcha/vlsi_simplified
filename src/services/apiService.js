@@ -59,65 +59,79 @@ class ApiService {
     }
 
     const requestPromise = (async () => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 25000); // 25-second timeout for cold starts
+      let lastError;
+      const maxAttempts = 2; // Auto-retry cold starts or transient timeouts
 
-      try {
-        const url = new URL(API_BASE_URL);
-        url.searchParams.set('action', action);
-        Object.keys(params).forEach(key => {
-          if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
-            url.searchParams.set(key, params[key]);
-          }
-        });
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const controller = new AbortController();
+        const timeoutMs = 45000; // 45-second timeout for Google Apps Script cold starts
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-        const response = await fetch(url.toString(), {
-          method: 'GET',
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          throw new Error(`API HTTP error ${response.status}: ${response.statusText || 'Request failed'}`);
-        }
-
-        const text = await response.text();
-        let result;
         try {
-          result = JSON.parse(text);
-        } catch (parseErr) {
-          throw new Error(`Invalid JSON received from API: ${text.slice(0, 150)}`);
+          const url = new URL(API_BASE_URL);
+          url.searchParams.set('action', action);
+          Object.keys(params).forEach(key => {
+            if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+              url.searchParams.set(key, params[key]);
+            }
+          });
+
+          const response = await fetch(url.toString(), {
+            method: 'GET',
+            signal: controller.signal
+          });
+
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            throw new Error(`API HTTP error ${response.status}: ${response.statusText || 'Request failed'}`);
+          }
+
+          const text = await response.text();
+          let result;
+          try {
+            result = JSON.parse(text);
+          } catch (parseErr) {
+            throw new Error(`Invalid JSON received from API: ${text.slice(0, 150)}`);
+          }
+
+          if (!result || typeof result !== 'object') {
+            throw new Error('API returned an empty or invalid response format.');
+          }
+
+          if (result.success === false) {
+            throw new Error(result.error || result.message || 'API operation returned error status.');
+          }
+
+          // Cache successful public response
+          if (!isAdmin) {
+            apiCache.set(cacheKey, { timestamp: Date.now(), data: result.data });
+          }
+
+          return result.data;
+        } catch (error) {
+          clearTimeout(timeoutId);
+          const isAbort = error.name === 'AbortError';
+          const errorMsg = isAbort
+            ? `Request timed out after 45s (action: ${action}). Google Apps Script may be waking up.`
+            : error.message;
+
+          lastError = new Error(errorMsg);
+          console.warn(`[ApiService] Attempt ${attempt} failed for action "${action}":`, errorMsg);
+
+          // If attempt 1 timed out on cold start, Apps Script is usually awake now; retry once immediately
+          if (attempt < maxAttempts) {
+            await new Promise(res => setTimeout(res, 1000));
+          }
         }
-
-        if (!result || typeof result !== 'object') {
-          throw new Error('API returned an empty or invalid response format.');
-        }
-
-        if (result.success === false) {
-          throw new Error(result.error || result.message || 'API operation returned error status.');
-        }
-
-        // Cache successful public response
-        if (!isAdmin) {
-          apiCache.set(cacheKey, { timestamp: Date.now(), data: result.data });
-        }
-
-        return result.data;
-      } catch (error) {
-        clearTimeout(timeoutId);
-        const isAbort = error.name === 'AbortError';
-        const errorMsg = isAbort
-          ? `Request timed out after 25s (action: ${action}). Google Apps Script may be waking up.`
-          : error.message;
-
-        console.error(`[ApiService] Request failed for action "${action}":`, errorMsg);
-        // CRITICAL: When API is configured, NEVER swallow errors or return empty arrays!
-        throw new Error(errorMsg);
-      } finally {
-        inFlightRequests.delete(cacheKey);
       }
-    })();
+
+      console.error(`[ApiService] Request failed for action "${action}":`, lastError?.message);
+      // CRITICAL: When API is configured, NEVER swallow errors or return empty arrays!
+      throw lastError;
+    })().finally(() => {
+      inFlightRequests.delete(cacheKey);
+    });
 
     inFlightRequests.set(cacheKey, requestPromise);
     return requestPromise;
@@ -141,7 +155,8 @@ class ApiService {
     }
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 25000);
+    const timeoutMs = 45000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const bodyData = {
@@ -189,7 +204,7 @@ class ApiService {
       clearTimeout(timeoutId);
       const isAbort = error.name === 'AbortError';
       const errorMsg = isAbort
-        ? `Mutation timed out after 25s (action: ${action}).`
+        ? `Mutation timed out after 45s (action: ${action}).`
         : error.message;
 
       console.error(`[ApiService] POST failed for action "${action}":`, errorMsg);
