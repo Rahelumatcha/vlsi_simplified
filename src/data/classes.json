@@ -1,0 +1,54 @@
+[
+  {
+    "id": "CLS-MUV4RW4L638",
+    "subjectId": "SUB-MUV4PLRU117",
+    "classNumber": 1,
+    "title": "Intro",
+    "description": "Intro of Numbers",
+    "youtubeUrl": "https://youtu.be/gpfDZjBXYK0?si=gNurl33Yzhsbenfe",
+    "thumbnailUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/fb9dmc2jupcljbbbg8p6",
+    "notesUrl": "https://drive.google.com/file/d/1_SxSYQkbMV-vD2JbAnnl-ZVL6nxC-SaK/view?usp=sharing",
+    "published": true,
+    "createdAt": "2026-10-05T10:52:31.222Z",
+    "updatedAt": "2026-10-06T06:44:28.024Z"
+  },
+  {
+    "id": "CLS-MUWC7ML5454",
+    "subjectId": "SUB-MUV664R6796",
+    "classNumber": 1,
+    "title": "introduction to verilog",
+    "description": "verilog concepts",
+    "youtubeUrl": "https://youtu.be/j4ReodR1Hzc?si=X-UTC9covqInrFkY",
+    "thumbnailUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/nmvkgagm5kj7gqvs8usl",
+    "notesUrl": "https://drive.google.com/file/d/0B1HXnM1lBuoqMzVhZjcwNTAtZWI5OS00ZDg3LWEyMzktNzZmYWY2Y2NhNWQx/view?hl=en&resourcekey=0-5DqnTtXPFvySMiWstuAYdA",
+    "published": true,
+    "createdAt": "2026-10-06T07:08:28.483Z",
+    "updatedAt": "2026-10-06T07:08:28.483Z"
+  },
+  {
+    "id": "CLS-MUWFJYHH958",
+    "subjectId": "SUB-MUWBBX3C204",
+    "classNumber": 1,
+    "title": "intro",
+    "description": "reprhojtn",
+    "youtubeUrl": "https://youtu.be/XnXWW9VlqJQ?si=0txWhSv4SG7c69hB",
+    "thumbnailUrl": "",
+    "notesUrl": "",
+    "published": true,
+    "createdAt": "2026-10-06T08:42:02.681Z",
+    "updatedAt": "2026-10-06T08:42:02.681Z"
+  },
+  {
+    "id": "CLS-MUWGA8E0699",
+    "subjectId": "SUB-MUV4PLRU117",
+    "classNumber": 2,
+    "title": "number systems",
+    "description": "number systems intro",
+    "youtubeUrl": "https://youtu.be/XnXWW9VlqJQ?si=ul5IFhawzynM6m7L",
+    "thumbnailUrl": "",
+    "notesUrl": "",
+    "published": true,
+    "createdAt": "2026-10-06T09:02:28.945Z",
+    "updatedAt": "2026-10-06T09:02:28.945Z"
+  }
+]

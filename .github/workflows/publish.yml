@@ -1,0 +1,52 @@
+name: Publish VLSI Simplified
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Trigger reason (e.g. Admin publish)'
+        required: false
+        default: 'Automated publish triggered from Admin Portal'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: Sync Data, Build & Publish
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Sync public data from Google Sheets
+        run: npm run sync-data
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || vars.VITE_API_BASE_URL }}
+
+      - name: Build production application
+        run: npm run build
+
+      - name: Commit updated static JSON data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/*.json
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore(data): automated static data sync from Google Sheets [skip ci]"
+            git push origin HEAD:${{ github.ref_name || 'main' }}
+          else
+            echo "No data changes detected. Static JSON files are already up to date."
+          fi

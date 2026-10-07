@@ -1,0 +1,29 @@
+[
+  {
+    "id": "QZ-MUV4U4IJ571",
+    "title": "DS fundamentals",
+    "subjectId": "SUB-MUV4PLRU117",
+    "description": "Intro",
+    "difficulty": "Beginner",
+    "timeLimit": 10,
+    "published": true,
+    "createdAt": "2026-10-05T10:54:15.010Z",
+    "updatedAt": "2026-10-05T10:54:15.010Z",
+    "questions": [
+      {
+        "id": "QUES-1791197586332-1",
+        "quizId": "QZ-MUV4U4IJ571",
+        "question": "what is DS",
+        "options": [
+          "DS",
+          "Digital Systems",
+          "Digital Source",
+          "Digital Sequence"
+        ],
+        "correctAnswer": "B",
+        "explanation": "Digital Systems",
+        "questionOrder": 1
+      }
+    ]
+  }
+]
