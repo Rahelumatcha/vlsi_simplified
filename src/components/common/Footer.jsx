@@ -4,10 +4,14 @@ import { Youtube, Linkedin, MessageCircle, Mail, Shield, ExternalLink } from 'lu
 import { APP_CONFIG } from '../../config';
 import { publicDataService } from '../../services/publicDataService';
 import { courseService } from '../../services/courseService';
+import { portfolioService } from '../../services/portfolioService';
 
 export const Footer = () => {
   const [publishedSubjects, setPublishedSubjects] = useState(() =>
     (publicDataService.getCachedSubjects() || []).filter((s) => s.published !== false)
+  );
+  const [trainerProfile, setTrainerProfile] = useState(() =>
+    publicDataService.getCachedTrainer() || {}
   );
 
   useEffect(() => {
@@ -17,6 +21,13 @@ export const Footer = () => {
         setPublishedSubjects(subs.filter((s) => s.published !== false));
       }
     }).catch(() => {});
+
+    portfolioService.getTrainerProfile().then((prof) => {
+      if (isMounted && prof) {
+        setTrainerProfile(prof);
+      }
+    }).catch(() => {});
+
     return () => { isMounted = false; };
   }, []);
   return (
@@ -113,7 +124,7 @@ export const Footer = () => {
             {/* Social Icons */}
             <div style={{ display: 'flex', gap: '10px' }}>
               <a
-                href={APP_CONFIG.youtubeChannel}
+                href={trainerProfile.youtube || APP_CONFIG.youtubeChannel}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-social-btn youtube"
@@ -123,7 +134,7 @@ export const Footer = () => {
               </a>
 
               <a
-                href={APP_CONFIG.linkedinProfile}
+                href={trainerProfile.linkedin || APP_CONFIG.linkedinProfile}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-social-btn linkedin"
@@ -221,7 +232,7 @@ export const Footer = () => {
                 Tutorials are structured directly on YouTube for high-speed streaming. Notes and exercise sheets are linked through Google Drive.
               </p>
               <a
-                href={APP_CONFIG.youtubeChannel}
+                href={trainerProfile.youtube || APP_CONFIG.youtubeChannel}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -234,7 +245,7 @@ export const Footer = () => {
                   transition: 'color 0.2s ease'
                 }}
               >
-                <span>Visit @VLSI_Simlified</span>
+                <span>{trainerProfile.youtube ? 'Visit YouTube Channel' : 'Visit @VLSI_Simlified'}</span>
                 <ExternalLink size={13} />
               </a>
             </div>

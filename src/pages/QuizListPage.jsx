@@ -447,9 +447,9 @@ export const QuizListPage = () => {
                           >
                             Explore Other Subjects
                           </Button>
-                          {APP_CONFIG.youtubeChannel && (
+                          {(publicDataService.getCachedTrainer()?.youtube || APP_CONFIG.youtubeChannel) && (
                             <a
-                              href={APP_CONFIG.youtubeChannel}
+                              href={publicDataService.getCachedTrainer()?.youtube || APP_CONFIG.youtubeChannel}
                               target="_blank"
                               rel="noopener noreferrer"
                               style={{ textDecoration: 'none' }}

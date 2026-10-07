@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Layers, Youtube } from 'lucide-react';
 import { APP_CONFIG } from '../../config';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
+import { publicDataService } from '../../services/publicDataService';
 
 export const SubjectCard = ({ subject }) => {
   const navigate = useNavigate();
@@ -156,7 +157,7 @@ export const SubjectCard = ({ subject }) => {
         >
           {/* Red YouTube Button (Opens YouTube in new tab, does not open course page) */}
           <a
-            href={subject.youtubePlaylistUrl || APP_CONFIG.youtubeChannel}
+            href={subject.youtubePlaylistUrl || publicDataService.getCachedTrainer()?.youtube || APP_CONFIG.youtubeChannel}
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleYouTubeClick}

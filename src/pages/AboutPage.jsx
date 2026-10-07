@@ -95,8 +95,8 @@ export const AboutPage = () => {
               {p.designation || 'Specialist in Digital Systems & Semiconductor Verification'}
             </p>
 
-            <p style={{ fontSize: '1rem', lineHeight: 1.7, color: '#475569', marginBottom: '24px' }}>
-              {p.bio ||
+            <p style={{ fontSize: '1rem', lineHeight: 1.7, color: '#475569', marginBottom: '24px', whiteSpace: 'pre-line' }}>
+              {p.fullBiography || p.bio ||
                 'A passionate VLSI trainer focused on making complex digital design and verification concepts simple, practical, and easy to understand.'}
             </p>
 
@@ -115,10 +115,10 @@ export const AboutPage = () => {
             >
               <div>
                 <span style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 700, display: 'block' }}>
-                  Qualifications
+                  Industry Focus
                 </span>
                 <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
-                  M.Tech / Industry Specialist
+                  {p.industryFocus || 'Design & Verification'}
                 </span>
               </div>
 
@@ -127,7 +127,7 @@ export const AboutPage = () => {
                   Experience
                 </span>
                 <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
-                  {p.yearsExperience || '10+'} Years in VLSI & Teaching
+                  {p.experienceHeadline || `${p.yearsExperience || '10+'} Years in VLSI & Teaching`}
                 </span>
               </div>
             </div>
@@ -139,7 +139,7 @@ export const AboutPage = () => {
                   Get in Touch
                 </Button>
               </Link>
-              <a href={APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer">
+              <a href={p.youtube || APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer">
                 <Button variant="youtube" icon={Youtube}>
                   YouTube Channel
                 </Button>
@@ -168,11 +168,7 @@ export const AboutPage = () => {
               }}
             >
               <img
-                src={
-                  p.profileImage && !p.profileImage.includes('unsplash.com')
-                    ? p.profileImage
-                    : APP_CONFIG.assets.trainerPhoto
-                }
+                src={p.profileImage || APP_CONFIG.assets.trainerPhoto}
                 alt={p.trainerName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={(e) => {
@@ -239,7 +235,7 @@ export const AboutPage = () => {
             Areas of Specialization
           </h2>
           <p style={{ color: '#475569', fontSize: '0.95rem' }}>
-            Structured knowledge domains honed over 10+ years in semiconductor design and verification.
+            Structured knowledge domains honed over {p.yearsExperience || '10+'} years in semiconductor design and verification.
           </p>
         </div>
 

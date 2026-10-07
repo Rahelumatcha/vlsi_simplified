@@ -231,7 +231,7 @@ export const HomePage = () => {
             </Button>
 
             <a
-              href={APP_CONFIG.youtubeChannel}
+              href={profile.youtube || APP_CONFIG.youtubeChannel}
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: 'none' }}
@@ -269,19 +269,25 @@ export const HomePage = () => {
             }}
           >
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>700+</div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+                {profile.totalClassesCount || profile.totalClasses || '700+'}
+              </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Free Tutorials</div>
               <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>YouTube Video Classes</div>
             </div>
 
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>5K+</div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+                {profile.studentsCount || '5K+'}
+              </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Learners Taught</div>
               <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Students & Engineers</div>
             </div>
 
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>10+</div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+                {subjects.length > 0 ? `${subjects.length}` : '10+'}
+              </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>VLSI Topics</div>
               <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Curated Domains</div>
             </div>
@@ -361,11 +367,7 @@ export const HomePage = () => {
               }}
             >
               <img
-                src={
-                  profile.profileImage && !profile.profileImage.includes('unsplash.com')
-                    ? profile.profileImage
-                    : APP_CONFIG.assets.trainerPhoto
-                }
+                src={profile.profileImage || APP_CONFIG.assets.trainerPhoto}
                 alt={profile.trainerName || 'VLSI Trainer'}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={(e) => {
@@ -392,7 +394,7 @@ export const HomePage = () => {
                 }}
               >
                 <Award size={18} color="#38bdf8" />
-                <span>10+ Years Semiconductor & Teaching Experience</span>
+                <span>{profile.experienceHeadline || `${profile.yearsExperience || '10+'} Years Semiconductor & Teaching Experience`}</span>
               </div>
             </div>
           </div>
@@ -413,7 +415,7 @@ export const HomePage = () => {
             </p>
 
             <p style={{ fontSize: '0.975rem', lineHeight: 1.7, color: '#475569', marginBottom: '24px' }}>
-              A dedicated educator on a mission to simplify complex chip design concepts. Teaching Digital Systems, Verilog, SystemVerilog, and UVM with industry-relevant testbenches and simulation waveforms.
+              {profile.bio || 'A dedicated educator on a mission to simplify complex chip design concepts. Teaching Digital Systems, Verilog, SystemVerilog, and UVM with industry-relevant testbenches and simulation waveforms.'}
             </p>
 
             {/* Quick Metrics Bar */}
@@ -434,7 +436,7 @@ export const HomePage = () => {
                   Industry Focus
                 </span>
                 <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
-                  Design & Verification
+                  {profile.industryFocus || 'Design & Verification'}
                 </span>
               </div>
 
@@ -443,7 +445,7 @@ export const HomePage = () => {
                   Learners
                 </span>
                 <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0ea5e9' }}>
-                  5,000+ Taught
+                  {profile.studentsCount ? `${profile.studentsCount} Taught` : '5,000+ Taught'}
                 </span>
               </div>
 
@@ -452,7 +454,7 @@ export const HomePage = () => {
                   YouTube Lectures
                 </span>
                 <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>
-                  700+ Published
+                  {profile.totalClassesCount ? `${profile.totalClassesCount} Published` : '700+ Published'}
                 </span>
               </div>
             </div>
@@ -491,7 +493,7 @@ export const HomePage = () => {
                 </Button>
               </Link>
               <a
-                href={APP_CONFIG.youtubeChannel}
+                href={profile.youtube || APP_CONFIG.youtubeChannel}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ textDecoration: 'none' }}
@@ -938,7 +940,7 @@ export const HomePage = () => {
                 Interactive topic-wise quizzes are currently being curated. Once published by the trainer via the Admin Panel, they will appear right here!
               </p>
 
-              <a href={APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <a href={profile.youtube || APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
                 <Button variant="secondary" icon={Youtube}>
                   Watch Video Classes While Waiting
                 </Button>
@@ -1153,7 +1155,7 @@ export const HomePage = () => {
           </p>
 
           <a
-            href={APP_CONFIG.youtubeChannel}
+            href={profile.youtube || APP_CONFIG.youtubeChannel}
             target="_blank"
             rel="noopener noreferrer"
             style={{ textDecoration: 'none' }}
@@ -1269,12 +1271,14 @@ export const HomePage = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.9rem', color: '#475569' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Mail size={18} color="#0ea5e9" />
-                <span>{APP_CONFIG.contactEmail}</span>
+                <a href={`mailto:${profile.email || APP_CONFIG.contactEmail}`} style={{ color: '#0f172a', textDecoration: 'none' }}>
+                  {profile.email || APP_CONFIG.contactEmail}
+                </a>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Youtube size={18} color="#ff0000" />
-                <a href={APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ color: '#0ea5e9', fontWeight: 600 }}>
-                  youtube.com/@VLSI_Simlified
+                <a href={profile.youtube || APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ color: '#0ea5e9', fontWeight: 600 }}>
+                  {profile.youtube ? profile.youtube.replace(/^https?:\/\/(www\.)?/, '') : 'youtube.com/@VLSI_Simlified'}
                 </a>
               </div>
             </div>

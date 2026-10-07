@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, Youtube, Linkedin, Send, MessageCircle, CheckCircle2, Phone } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { APP_CONFIG } from '../config';
 import { useToast } from '../contexts/ToastContext';
+import { portfolioService } from '../services/portfolioService';
+import { publicDataService } from '../services/publicDataService';
 
 export const ContactPage = () => {
   const { showSuccess } = useToast();
+  const [profile, setProfile] = useState(() => publicDataService.getCachedTrainer());
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,6 +17,18 @@ export const ContactPage = () => {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await portfolioService.getTrainerProfile();
+        if (data) setProfile(data);
+      } catch (err) {
+        console.error('Failed to load profile in contact page:', err);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -150,10 +165,10 @@ export const ContactPage = () => {
                       Email
                     </span>
                     <a
-                      href={`mailto:${APP_CONFIG.contactEmail}`}
+                      href={`mailto:${profile.email || APP_CONFIG.contactEmail}`}
                       style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.925rem' }}
                     >
-                      {APP_CONFIG.contactEmail}
+                      {profile.email || APP_CONFIG.contactEmail}
                     </a>
                   </div>
                 </div>
@@ -179,12 +194,12 @@ export const ContactPage = () => {
                       YouTube Channel
                     </span>
                     <a
-                      href={APP_CONFIG.youtubeChannel}
+                      href={profile.youtube || APP_CONFIG.youtubeChannel}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.925rem' }}
                     >
-                      @VLSI_Simlified
+                      {profile.youtube ? profile.youtube.replace(/^https?:\/\/(www\.)?/, '') : '@VLSI_Simlified'}
                     </a>
                   </div>
                 </div>
@@ -210,12 +225,12 @@ export const ContactPage = () => {
                       LinkedIn
                     </span>
                     <a
-                      href={APP_CONFIG.linkedinProfile}
+                      href={profile.linkedin || APP_CONFIG.linkedinProfile}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.925rem' }}
                     >
-                      linkedin.com/in/vlsi-educator
+                      {profile.linkedin ? profile.linkedin.replace(/^https?:\/\/(www\.)?/, '') : 'linkedin.com/in/vlsi-educator'}
                     </a>
                   </div>
                 </div>

@@ -4,6 +4,7 @@ import { Menu, X, Youtube, Shield, Cpu } from 'lucide-react';
 import { APP_CONFIG } from '../../config';
 import { useAuth } from '../../contexts/AuthContext';
 import { navigateToSection } from '../../utils/navigationHelper';
+import { publicDataService } from '../../services/publicDataService';
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -12,6 +13,7 @@ export const Navbar = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const youtubeUrl = publicDataService.getCachedTrainer()?.youtube || APP_CONFIG.youtubeChannel;
 
   const navLinks = [
     { name: 'Home', sectionId: 'home' },
@@ -224,7 +226,7 @@ export const Navbar = () => {
           {/* YouTube Action Button & Admin */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <a
-              href={APP_CONFIG.youtubeChannel}
+              href={youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -327,7 +329,7 @@ export const Navbar = () => {
           ))}
 
           <a
-            href={APP_CONFIG.youtubeChannel}
+            href={youtubeUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMobileMenuOpen(false)}
