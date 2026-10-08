@@ -162,7 +162,7 @@ export const SubjectClassesPage = () => {
           style={{
             backgroundColor: '#ffffff',
             borderRadius: '20px',
-            padding: '36px',
+            padding: 'clamp(18px, 4vw, 36px)',
             border: '1.5px solid #e0f2fe',
             boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
             display: 'flex',
@@ -195,7 +195,7 @@ export const SubjectClassesPage = () => {
           {/* Clean Progress Area */}
           <div
             style={{
-              padding: '18px 24px',
+              padding: 'clamp(14px, 3vw, 18px) clamp(14px, 3vw, 24px)',
               borderRadius: '14px',
               backgroundColor: '#f8fcff',
               border: '1px solid #e0f2fe',
@@ -205,7 +205,7 @@ export const SubjectClassesPage = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '0.875rem', color: '#475569' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', fontSize: '0.875rem', color: '#475569' }}>
                 <span><strong>Total Classes:</strong> {totalClasses}</span>
                 <span><strong style={{ color: '#10b981' }}>Completed:</strong> {completedCount}</span>
                 <span><strong style={{ color: '#0ea5e9' }}>Remaining:</strong> {remainingCount}</span>

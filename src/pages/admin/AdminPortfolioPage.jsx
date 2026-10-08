@@ -123,7 +123,7 @@ export const AdminPortfolioPage = () => {
           style={{
             backgroundColor: '#ffffff',
             borderRadius: '16px',
-            padding: '28px',
+            padding: 'clamp(16px, 3.5vw, 28px)',
             border: '1px solid #e1effa',
             boxShadow: '0 2px 8px rgba(7, 26, 43, 0.04)',
             display: 'flex',
@@ -145,7 +145,7 @@ export const AdminPortfolioPage = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '18px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
                 Trainer Full Name *
@@ -265,7 +265,7 @@ export const AdminPortfolioPage = () => {
           style={{
             backgroundColor: '#ffffff',
             borderRadius: '16px',
-            padding: '28px',
+            padding: 'clamp(16px, 3.5vw, 28px)',
             border: '1px solid #e1effa',
             boxShadow: '0 2px 8px rgba(7, 26, 43, 0.04)',
             display: 'flex',
@@ -287,7 +287,7 @@ export const AdminPortfolioPage = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '18px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
                 Experience Headline *
@@ -337,7 +337,7 @@ export const AdminPortfolioPage = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '18px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
                 Years Experience Display
@@ -389,7 +389,7 @@ export const AdminPortfolioPage = () => {
           style={{
             backgroundColor: '#ffffff',
             borderRadius: '16px',
-            padding: '28px',
+            padding: 'clamp(16px, 3.5vw, 28px)',
             border: '1px solid #e1effa',
             boxShadow: '0 2px 8px rgba(7, 26, 43, 0.04)',
             display: 'flex',
@@ -411,7 +411,7 @@ export const AdminPortfolioPage = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '18px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
                 Students Count (Learners Taught)
@@ -487,7 +487,7 @@ export const AdminPortfolioPage = () => {
           style={{
             backgroundColor: '#ffffff',
             borderRadius: '16px',
-            padding: '28px',
+            padding: 'clamp(16px, 3.5vw, 28px)',
             border: '1px solid #e1effa',
             boxShadow: '0 2px 8px rgba(7, 26, 43, 0.04)',
             display: 'flex',
@@ -509,7 +509,7 @@ export const AdminPortfolioPage = () => {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '18px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
                 Public Email Address

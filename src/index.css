@@ -12,6 +12,8 @@ html {
   background-color: #ffffff;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Ensure sticky navbar never conceals section headings */
@@ -24,12 +26,17 @@ body {
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 a {
@@ -42,6 +49,7 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+  touch-action: manipulation;
 }
 
 input, textarea, select {
@@ -49,14 +57,14 @@ input, textarea, select {
   font-size: 0.95rem;
 }
 
-/* Layout Containers */
+/* Layout Containers with Fluid Clamped Padding */
 .container {
   width: 100%;
   max-width: 1220px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: clamp(1rem, 3.5vw, 1.5rem);
+  padding-right: clamp(1rem, 3.5vw, 1.5rem);
 }
 
 .container-narrow {
@@ -64,8 +72,8 @@ input, textarea, select {
   max-width: 860px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: clamp(1rem, 3.5vw, 1.5rem);
+  padding-right: clamp(1rem, 3.5vw, 1.5rem);
 }
 
 /* Headings */
@@ -275,4 +283,89 @@ input, textarea, select {
 .footer-social-btn.mail:hover {
   color: #0ea5e9;
 }
+
+/* ==========================================================================
+   Responsive Utilities & Micro-Interactions
+   ========================================================================== */
+
+/* Button Micro-Interactions */
+.btn-interactive, .modern-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Responsive Stats Grid */
+.stats-grid-responsive {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .stats-grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Responsive Table Container for Admin & Data Tables */
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+}
+
+/* Responsive Images & Videos */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Hero Video Height Scaling */
+@media (max-width: 768px) {
+  .hero-video-section {
+    min-height: 600px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-video-section {
+    min-height: 540px !important;
+  }
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero-animate-title {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 

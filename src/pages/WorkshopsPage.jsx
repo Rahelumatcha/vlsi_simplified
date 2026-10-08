@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, Clock, Video, CheckCircle2, MessageCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
+import { ScrollReveal } from '../components/common/ScrollReveal';
 import { APP_CONFIG } from '../config';
 
 // Default empty: workshops will only display when added by admin
@@ -14,45 +15,48 @@ export const WorkshopsPage = () => {
     <div style={{ padding: '48px 0 80px', display: 'flex', flexDirection: 'column', gap: '48px' }}>
       <section className="container">
         {/* Header */}
-        <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 48px' }}>
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#0ea5e9',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              display: 'block',
-              marginBottom: '8px'
-            }}
-          >
-            INTERACTIVE LIVE TRAINING
-          </span>
-          <h1 className="heading-section" style={{ color: '#0f172a', margin: '0 0 12px' }}>
-            Live VLSI Workshops & Bootcamps
-          </h1>
-          <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6 }}>
-            Deep-dive weekend masterclasses focused on practical RTL design, SystemVerilog verification, and UVM architectures.
-          </p>
-        </div>
+        <ScrollReveal direction="up">
+          <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 48px' }}>
+            <span
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#0ea5e9',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                display: 'block',
+                marginBottom: '8px'
+              }}
+            >
+              INTERACTIVE LIVE TRAINING
+            </span>
+            <h1 className="heading-section" style={{ color: '#0f172a', margin: '0 0 12px' }}>
+              Live VLSI Workshops & Bootcamps
+            </h1>
+            <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6 }}>
+              Deep-dive weekend masterclasses focused on practical RTL design, SystemVerilog verification, and UVM architectures.
+            </p>
+          </div>
+        </ScrollReveal>
 
         {/* Workshop Cards Grid or Coming Soon State */}
         {workshops.length === 0 ? (
-          <div
-            style={{
-              maxWidth: '720px',
-              margin: '0 auto',
-              backgroundColor: '#ffffff',
-              borderRadius: '24px',
-              padding: '56px 40px',
-              border: '2px dashed #bae6fd',
-              boxShadow: '0 10px 30px rgba(14, 165, 233, 0.06)',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}
-          >
+          <ScrollReveal direction="up">
+            <div
+              style={{
+                maxWidth: '720px',
+                margin: '0 auto',
+                backgroundColor: '#ffffff',
+                borderRadius: '24px',
+                padding: 'clamp(28px, 5vw, 56px) clamp(16px, 4vw, 40px)',
+                border: '2px dashed #bae6fd',
+                boxShadow: '0 10px 30px rgba(14, 165, 233, 0.06)',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}
+            >
             <div
               style={{
                 width: '64px',
@@ -107,6 +111,7 @@ export const WorkshopsPage = () => {
               </Button>
             </a>
           </div>
+        </ScrollReveal>
         ) : (
           <div className="grid-cards">
             {workshops.map((ws) => (

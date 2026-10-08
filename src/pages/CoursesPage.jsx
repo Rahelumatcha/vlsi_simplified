@@ -6,6 +6,7 @@ import { SubjectCard } from '../components/courses/SubjectCard';
 import { SearchBar } from '../components/common/SearchBar';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { EmptyState } from '../components/common/EmptyState';
+import { ScrollReveal } from '../components/common/ScrollReveal';
 
 export const CoursesPage = () => {
   const [subjects, setSubjects] = useState(() => {
@@ -63,49 +64,51 @@ export const CoursesPage = () => {
     <div style={{ padding: '48px 0 80px', display: 'flex', flexDirection: 'column', gap: '40px' }}>
       <section className="container">
         {/* Header & Search Bar */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '24px',
-            marginBottom: '16px'
-          }}
-        >
-          <div>
-            <span
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#0ea5e9',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                display: 'block',
-                marginBottom: '6px'
-              }}
-            >
-              FREE VIDEO CURRICULUM
-            </span>
-            <h1 className="heading-section" style={{ color: '#071a2b', margin: 0 }}>
-              Courses & Subject Specializations
-            </h1>
-            <p style={{ color: '#53708a', fontSize: '1rem', marginTop: '8px', maxWidth: '680px' }}>
-              Explore comprehensive video courses structured sequentially. Each lecture includes direct YouTube access and downloadable lecture notes hosted on Google Drive.
-            </p>
-          </div>
+        <ScrollReveal direction="up">
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '24px',
+              marginBottom: '16px'
+            }}
+          >
+            <div>
+              <span
+                style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#0ea5e9',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  display: 'block',
+                  marginBottom: '6px'
+                }}
+              >
+                FREE VIDEO CURRICULUM
+              </span>
+              <h1 className="heading-section" style={{ color: '#071a2b', margin: 0 }}>
+                Courses & Subject Specializations
+              </h1>
+              <p style={{ color: '#53708a', fontSize: '1rem', marginTop: '8px', maxWidth: '680px' }}>
+                Explore comprehensive video courses structured sequentially. Each lecture includes direct YouTube access and downloadable lecture notes hosted on Google Drive.
+              </p>
+            </div>
 
-          {/* Search Bar */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-            <SearchBar
-              value={searchTerm}
-              onChange={setSearchTerm}
-              placeholder="Search subjects or lecture titles..."
-              maxWidth="450px"
-            />
-            <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#64748b' }}>
-              Showing {filteredSubjects.length} of {subjects.length} subjects
+            {/* Search Bar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+              <SearchBar
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder="Search subjects or lecture titles..."
+                maxWidth="450px"
+              />
+              <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#64748b' }}>
+                Showing {filteredSubjects.length} of {subjects.length} subjects
+              </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Content Area */}
         {loading ? (
@@ -124,8 +127,10 @@ export const CoursesPage = () => {
           />
         ) : (
           <div className="grid-cards">
-            {filteredSubjects.map((subject) => (
-              <SubjectCard key={subject.id} subject={subject} />
+            {filteredSubjects.map((subject, idx) => (
+              <ScrollReveal key={subject.id} delay={idx * 80}>
+                <SubjectCard subject={subject} />
+              </ScrollReveal>
             ))}
           </div>
         )}

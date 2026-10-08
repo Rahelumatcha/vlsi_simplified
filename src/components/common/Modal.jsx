@@ -28,17 +28,15 @@ export const Modal = ({
     <div
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
+        inset: 0,
         backgroundColor: 'rgba(7, 26, 43, 0.65)',
         backdropFilter: 'blur(6px)',
         zIndex: 9000,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '16px'
+        padding: '12px',
+        boxSizing: 'border-box'
       }}
       onClick={onClose}
     >
@@ -47,8 +45,8 @@ export const Modal = ({
           backgroundColor: '#ffffff',
           borderRadius: '16px',
           width: '100%',
-          maxWidth,
-          maxHeight: '90vh',
+          maxWidth: `min(95vw, ${maxWidth})`,
+          maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
@@ -60,14 +58,14 @@ export const Modal = ({
         {/* Header */}
         <div
           style={{
-            padding: '18px 24px',
+            padding: 'clamp(14px, 3vw, 18px) clamp(16px, 3.5vw, 24px)',
             borderBottom: '1px solid #e1effa',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
           }}
         >
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#071a2b' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#071a2b', margin: 0 }}>
             {title}
           </h3>
           <button
@@ -76,7 +74,9 @@ export const Modal = ({
               padding: '6px',
               borderRadius: '6px',
               color: '#64748b',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              border: 'none',
+              background: 'none'
             }}
           >
             <X size={20} />
@@ -84,7 +84,7 @@ export const Modal = ({
         </div>
 
         {/* Body */}
-        <div style={{ padding: '24px', overflowY: 'auto', flex: 1 }}>
+        <div style={{ padding: 'clamp(16px, 3.5vw, 24px)', overflowY: 'auto', flex: 1 }}>
           {children}
         </div>
       </div>

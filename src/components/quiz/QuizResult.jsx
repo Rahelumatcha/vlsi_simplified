@@ -17,7 +17,7 @@ export const QuizResult = ({
         style={{
           backgroundColor: '#ffffff',
           borderRadius: '20px',
-          padding: '36px',
+          padding: 'clamp(20px, 4vw, 36px)',
           textAlign: 'center',
           border: '1px solid #e1effa',
           boxShadow: '0 10px 30px rgba(7, 26, 43, 0.06)',
@@ -55,11 +55,11 @@ export const QuizResult = ({
           {passed ? 'Quiz Completed — Passed!' : 'Quiz Completed — Keep Practicing!'}
         </span>
 
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+        <h2 style={{ fontSize: 'clamp(1.3rem, 3vw, 1.75rem)', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
           {quizTitle}
         </h2>
 
-        <div style={{ fontSize: '3rem', fontWeight: 800, color: '#0ea5e9', margin: '12px 0 6px' }}>
+        <div style={{ fontSize: 'clamp(2.4rem, 6vw, 3.2rem)', fontWeight: 800, color: '#0ea5e9', margin: '8px 0 4px' }}>
           {percentage}%
         </div>
 
@@ -73,9 +73,11 @@ export const QuizResult = ({
         <div
           style={{
             display: 'flex',
-            gap: '24px',
+            gap: 'clamp(12px, 3vw, 24px)',
             justifyContent: 'center',
-            padding: '16px 28px',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            padding: '14px clamp(12px, 3vw, 28px)',
             borderRadius: '12px',
             backgroundColor: '#f8fafc',
             border: '1px solid #e2e8f0',

@@ -17,7 +17,7 @@ export const AdminLayout = ({ title = 'Dashboard', subtitle = 'Manage courses, c
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         />
 
-        <main style={{ flex: 1, padding: '28px', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+        <main style={{ flex: 1, padding: 'clamp(14px, 3vw, 28px)', maxWidth: '1400px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
           <Outlet />
         </main>
       </div>

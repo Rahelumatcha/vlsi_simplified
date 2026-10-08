@@ -22,6 +22,7 @@ import { courseService } from '../services/courseService';
 import { publicDataService } from '../services/publicDataService';
 import { Button } from '../components/common/Button';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { ScrollReveal } from '../components/common/ScrollReveal';
 import { APP_CONFIG } from '../config';
 
 export const AboutPage = () => {
@@ -59,19 +60,20 @@ export const AboutPage = () => {
     <div style={{ padding: '48px 0 80px', display: 'flex', flexDirection: 'column', gap: '56px' }}>
       {/* Profile Overview Header */}
       <section className="container">
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '24px',
-            padding: '48px',
-            border: '1.5px solid #e0f2fe',
-            boxShadow: '0 6px 24px rgba(14, 165, 233, 0.05)',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '48px',
-            alignItems: 'center'
-          }}
-        >
+        <ScrollReveal direction="up">
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '24px',
+              padding: 'clamp(20px, 4.5vw, 48px)',
+              border: '1.5px solid #e0f2fe',
+              boxShadow: '0 6px 24px rgba(14, 165, 233, 0.05)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+              gap: 'clamp(24px, 4vw, 48px)',
+              alignItems: 'center'
+            }}
+          >
           <div>
             <span
               style={{
@@ -178,66 +180,71 @@ export const AboutPage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </ScrollReveal>
+    </section>
 
       {/* Teaching Philosophy (Sky Blue + White Theme) */}
       <section className="container">
-        <div
-          style={{
-            backgroundColor: '#f0f9ff',
-            color: '#0f172a',
-            borderRadius: '24px',
-            padding: '48px',
-            border: '2px solid #bae6fd',
-            boxShadow: '0 6px 20px rgba(14, 165, 233, 0.05)'
-          }}
-        >
-          <span
+        <ScrollReveal direction="up">
+          <div
             style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#0ea5e9',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              display: 'block',
-              marginBottom: '10px'
+              backgroundColor: '#f0f9ff',
+              color: '#0f172a',
+              borderRadius: '24px',
+              padding: 'clamp(20px, 4.5vw, 48px)',
+              border: '2px solid #bae6fd',
+              boxShadow: '0 6px 20px rgba(14, 165, 233, 0.05)'
             }}
           >
-            PEDAGOGICAL APPROACH
-          </span>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>
-            Teaching Philosophy: Silicon-First Education
-          </h2>
-          <p style={{ fontSize: '1.05rem', lineHeight: 1.75, color: '#334155', maxWidth: '900px', margin: 0 }}>
-            {p.teachingPhilosophy ||
-              'Hardware engineering is best learned from the silicon up. By uniting abstract Boolean theory with real CMOS physical constraints and industrial verification workflows, students develop true silicon intuition.'}
-          </p>
-        </div>
+            <span
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#0ea5e9',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                display: 'block',
+                marginBottom: '10px'
+              }}
+            >
+              PEDAGOGICAL APPROACH
+            </span>
+            <h2 style={{ fontSize: 'clamp(1.35rem, 3vw, 1.75rem)', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>
+              Teaching Philosophy: Silicon-First Education
+            </h2>
+            <p style={{ fontSize: '1.05rem', lineHeight: 1.75, color: '#334155', maxWidth: '900px', margin: 0 }}>
+              {p.teachingPhilosophy ||
+                'Hardware engineering is best learned from the silicon up. By uniting abstract Boolean theory with real CMOS physical constraints and industrial verification workflows, students develop true silicon intuition.'}
+            </p>
+          </div>
+        </ScrollReveal>
       </section>
 
       {/* Expertise & Skills */}
       <section className="container">
-        <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 40px' }}>
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#0ea5e9',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              display: 'block',
-              marginBottom: '6px'
-            }}
-          >
-            CORE MASTERY
-          </span>
-          <h2 className="heading-section" style={{ color: '#0f172a', marginBottom: '10px' }}>
-            Areas of Specialization
-          </h2>
-          <p style={{ color: '#475569', fontSize: '0.95rem' }}>
-            Structured knowledge domains honed over {p.yearsExperience || '10+'} years in semiconductor design and verification.
-          </p>
-        </div>
+        <ScrollReveal direction="up">
+          <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 40px' }}>
+            <span
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#0ea5e9',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                display: 'block',
+                marginBottom: '6px'
+              }}
+            >
+              CORE MASTERY
+            </span>
+            <h2 className="heading-section" style={{ color: '#0f172a', marginBottom: '10px' }}>
+              Areas of Specialization
+            </h2>
+            <p style={{ color: '#475569', fontSize: '0.95rem' }}>
+              Structured knowledge domains honed over {p.yearsExperience || '10+'} years in semiconductor design and verification.
+            </p>
+          </div>
+        </ScrollReveal>
 
         <div className="grid-cards-4">
           {(subjects || []).filter((s) => s.published !== false).map((sub) => (

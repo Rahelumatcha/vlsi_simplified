@@ -169,12 +169,12 @@ export const QuizTakePage = () => {
         style={{
           backgroundColor: '#ffffff',
           borderRadius: '20px',
-          padding: '36px',
+          padding: 'clamp(18px, 4vw, 36px)',
           border: '1px solid #e1effa',
           boxShadow: '0 8px 24px rgba(7, 26, 43, 0.05)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '28px'
+          gap: '24px'
         }}
       >
         {/* Progress Bar */}
@@ -219,6 +219,8 @@ export const QuizTakePage = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px',
             paddingTop: '20px',
             borderTop: '1px solid #f1f5f9',
             marginTop: '8px'

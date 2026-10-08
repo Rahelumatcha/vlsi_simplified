@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Mail, Youtube, Linkedin, Send, MessageCircle, CheckCircle2, Phone } from 'lucide-react';
 import { Button } from '../components/common/Button';
+import { ScrollReveal } from '../components/common/ScrollReveal';
 import { APP_CONFIG } from '../config';
 import { useToast } from '../contexts/ToastContext';
 import { portfolioService } from '../services/portfolioService';
@@ -43,50 +44,54 @@ export const ContactPage = () => {
     <div style={{ padding: '48px 0 80px' }}>
       <div className="container">
         {/* Header */}
-        <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 48px' }}>
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#0ea5e9',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              display: 'block',
-              marginBottom: '6px'
-            }}
-          >
-            LET'S CONNECT
-          </span>
-          <h1 className="heading-section" style={{ color: '#0f172a', margin: '0 0 10px' }}>
-            Get in Touch with the Trainer
-          </h1>
-          <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6 }}>
-            Have a question about VLSI tutorials, upcoming workshops, curriculum guidance, or collaborations? Send a message below or chat directly on WhatsApp.
-          </p>
-        </div>
+        <ScrollReveal direction="up">
+          <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 48px' }}>
+            <span
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#0ea5e9',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                display: 'block',
+                marginBottom: '6px'
+              }}
+            >
+              LET'S CONNECT
+            </span>
+            <h1 className="heading-section" style={{ color: '#0f172a', margin: '0 0 10px' }}>
+              Get in Touch with the Trainer
+            </h1>
+            <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6 }}>
+              Have a question about VLSI tutorials, upcoming workshops, curriculum guidance, or collaborations? Send a message below or chat directly on WhatsApp.
+            </p>
+          </div>
+        </ScrollReveal>
 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '40px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: 'clamp(24px, 4vw, 40px)',
             maxWidth: '1050px',
             margin: '0 auto'
           }}
         >
           {/* Contact Details Card (Sky Blue & White) */}
-          <div
-            style={{
-              backgroundColor: '#f8fcff',
-              borderRadius: '20px',
-              padding: '40px',
-              border: '1.5px solid #e0f2fe',
-              boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}
-          >
+          <ScrollReveal direction="left">
+            <div
+              style={{
+                backgroundColor: '#f8fcff',
+                borderRadius: '20px',
+                padding: 'clamp(20px, 4vw, 40px)',
+                border: '1.5px solid #e0f2fe',
+                boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                height: '100%'
+              }}
+            >
             <div>
               <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '12px', color: '#0f172a' }}>
                 Contact Channels
@@ -243,15 +248,18 @@ export const ContactPage = () => {
               </span>
             </div>
           </div>
+        </ScrollReveal>
 
-          {/* Form Card (White Background) */}
+        {/* Form Card (White Background) */}
+        <ScrollReveal direction="right">
           <div
             style={{
               backgroundColor: '#ffffff',
               borderRadius: '20px',
-              padding: '40px',
+              padding: 'clamp(20px, 4vw, 40px)',
               border: '1.5px solid #e0f2fe',
-              boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)'
+              boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
+              height: '100%'
             }}
           >
             {submitted ? (
@@ -408,8 +416,9 @@ export const ContactPage = () => {
               </form>
             )}
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </div>
-  );
+  </div>
+);
 };

@@ -358,16 +358,38 @@ export const ClassCard = ({
           .class-card-horizontal {
             flex-direction: column !important;
             align-items: flex-start !important;
+            padding: 14px !important;
+            gap: 16px !important;
           }
           .card-thumb-container {
             width: 100% !important;
-            height: 180px !important;
+            height: 190px !important;
           }
           .card-actions-col {
             width: 100% !important;
             align-items: stretch !important;
             flex-direction: row !important;
             justifyContent: space-between !important;
+          }
+        }
+
+        @media (max-width: 520px) {
+          .card-thumb-container {
+            height: 160px !important;
+          }
+          .card-actions-col {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 10px !important;
+          }
+          .card-actions-col > div {
+            justify-content: stretch !important;
+            flex-direction: column !important;
+          }
+          .yt-play-btn, .notes-doc-btn {
+            min-height: 42px !important;
+            width: 100% !important;
+            flex: 1 1 auto !important;
           }
         }
       `}</style>

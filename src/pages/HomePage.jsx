@@ -39,6 +39,8 @@ import { initialTrainerProfile } from '../data/initialTrainerProfile';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { SectionCurve } from '../components/common/SectionCurve';
 import { TypingTitle } from '../components/common/TypingTitle';
+import { ScrollReveal } from '../components/common/ScrollReveal';
+import { AnimatedCounter } from '../components/common/AnimatedCounter';
 import { useToast } from '../contexts/ToastContext';
 import { navigateToSection } from '../utils/navigationHelper';
 
@@ -192,14 +194,14 @@ export const HomePage = () => {
           </div>
 
           {/* Heading with static "VLSI " and dynamic rotating synonyms */}
-          <h1 style={{ marginBottom: '18px', maxWidth: '780px' }}>
-            <div style={{ fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 800, letterSpacing: '-0.02em', textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+          <h1 style={{ marginBottom: '18px', maxWidth: '780px', width: '100%', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+            <div style={{ fontSize: 'clamp(2.1rem, 6vw, 3.8rem)', fontWeight: 800, letterSpacing: '-0.02em', textShadow: '0 4px 20px rgba(0,0,0,0.5)', lineHeight: 1.15 }}>
               <TypingTitle
                 staticPrefix="VLSI "
                 words={['Simplified', 'Made Easy', 'Demystified', 'Design & Verification', 'Mastery']}
               />
             </div>
-            <div style={{ color: '#ffffff', fontSize: 'clamp(1.4rem, 2.8vw, 2.1rem)', fontWeight: 700, marginTop: '8px', textShadow: '0 2px 10px rgba(0,0,0,0.4)', lineHeight: 1.25 }}>
+            <div style={{ color: '#ffffff', fontSize: 'clamp(1.2rem, 3.2vw, 2.1rem)', fontWeight: 700, marginTop: '8px', textShadow: '0 2px 10px rgba(0,0,0,0.4)', lineHeight: 1.3 }}>
               Master Digital Systems, Verilog & UVM
             </div>
           </h1>
@@ -207,7 +209,7 @@ export const HomePage = () => {
           {/* Value proposition description */}
           <p
             style={{
-              fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
+              fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
               lineHeight: 1.7,
               color: '#e0f2fe',
               marginBottom: '28px',
@@ -257,43 +259,36 @@ export const HomePage = () => {
             </Button>
           </div>
 
-          {/* 4 STATISTICS (NO EXTRA CONTAINER - DIRECT IN FLOW) */}
-          <div
-            style={{
-              width: '100%',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-              gap: '24px',
-              marginTop: '12px',
-              marginBottom: '20px'
-            }}
-          >
+          {/* 4 STATISTICS (RESPONSIVE 4-COL DESKTOP / 2X2 MOBILE GRID + ANIMATED COUNTER) */}
+          <div className="stats-grid-responsive" style={{ marginTop: '12px', marginBottom: '20px' }}>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
-                {profile.totalClassesCount || profile.totalClasses || '700+'}
+              <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+                <AnimatedCounter value={profile.totalClassesCount || profile.totalClasses || '700+'} />
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Free Tutorials</div>
               <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>YouTube Video Classes</div>
             </div>
 
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
-                {profile.studentsCount || '5K+'}
+              <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+                <AnimatedCounter value={profile.studentsCount || '5K+'} />
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Learners Taught</div>
               <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Students & Engineers</div>
             </div>
 
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
-                {subjects.length > 0 ? `${subjects.length}` : '10+'}
+              <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+                <AnimatedCounter value={subjects.length > 0 ? `${subjects.length}` : '10+'} />
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>VLSI Topics</div>
               <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Curated Domains</div>
             </div>
 
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: '2.4rem', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>Live</div>
+              <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
+                <AnimatedCounter value="Live" />
+              </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Workshops & Classes</div>
               <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Interactive Sessions</div>
             </div>
@@ -339,19 +334,20 @@ export const HomePage = () => {
       {/* 2. ABOUT THE TRAINER (DYNAMIC, ATTRACTIVE, REFINED)                     */}
       {/* ========================================================================= */}
       <section id="about" className="container" style={{ scrollMarginTop: '65px' }}>
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '24px',
-            padding: '48px',
-            border: '1.5px solid #e0f2fe',
-            boxShadow: '0 8px 30px rgba(14, 165, 233, 0.06)',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
-            gap: '48px',
-            alignItems: 'center'
-          }}
-        >
+        <ScrollReveal direction="up">
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '24px',
+              padding: 'clamp(24px, 5vw, 48px)',
+              border: '1.5px solid #e0f2fe',
+              boxShadow: '0 8px 30px rgba(14, 165, 233, 0.06)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+              gap: 'clamp(24px, 5vw, 48px)',
+              alignItems: 'center'
+            }}
+          >
           {/* Left: Trainer Photo with Glowing Frame */}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div
@@ -505,40 +501,45 @@ export const HomePage = () => {
             </div>
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* ========================================================================= */}
       {/* 3. COURSES / EXPLORE VLSI TOPICS (SUBJECT CARDS ONLY - NO CLASS LIST)   */}
       {/* ========================================================================= */}
       <section id="courses" className="container" style={{ scrollMarginTop: '65px' }}>
-        <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 40px' }}>
-          <span
-            style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#0ea5e9',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              display: 'block',
-              marginBottom: '6px'
-            }}
-          >
-            STRUCTURED VLSI CURRICULUM
-          </span>
-          <h2 className="heading-section" style={{ margin: '0 0 10px' }}>
-            Explore Course Tracks
-          </h2>
-          <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6 }}>
-            Click any course card to explore its full sequential lecture list, notes, and progress tracker.
-          </p>
-        </div>
+        <ScrollReveal direction="up">
+          <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 40px' }}>
+            <span
+              style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: '#0ea5e9',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                display: 'block',
+                marginBottom: '6px'
+              }}
+            >
+              STRUCTURED VLSI CURRICULUM
+            </span>
+            <h2 className="heading-section" style={{ margin: '0 0 10px' }}>
+              Explore Course Tracks
+            </h2>
+            <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6 }}>
+              Click any course card to explore its full sequential lecture list, notes, and progress tracker.
+            </p>
+          </div>
+        </ScrollReveal>
 
         {loading ? (
           <LoadingSpinner message="Loading course curriculum..." />
         ) : subjects.length > 0 ? (
           <div className="grid-cards">
-            {subjects.map((sub) => (
-              <SubjectCard key={sub.id} subject={sub} />
+            {subjects.map((sub, idx) => (
+              <ScrollReveal key={sub.id} delay={idx * 80}>
+                <SubjectCard subject={sub} />
+              </ScrollReveal>
             ))}
           </div>
         ) : (
@@ -600,59 +601,61 @@ export const HomePage = () => {
 
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           {/* Header */}
-          <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 52px' }}>
-            <span
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                color: '#7dd3fc',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: 'rgba(14, 165, 233, 0.15)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(125, 211, 252, 0.3)',
-                padding: '6px 16px',
-                borderRadius: '9999px',
-                marginBottom: '16px'
-              }}
-            >
-              <Cpu size={15} color="#38bdf8" />
-              CORE PEDAGOGY
-            </span>
-            <h2
-              style={{
-                fontSize: 'clamp(2rem, 3.5vw, 2.6rem)',
-                fontWeight: 800,
-                color: '#ffffff',
-                letterSpacing: '-0.025em',
-                margin: '0 0 14px',
-                lineHeight: 1.2
-              }}
-            >
-              Why Learn with{' '}
+          <ScrollReveal direction="up">
+            <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 52px' }}>
               <span
                 style={{
-                  background: 'linear-gradient(135deg, #ffffff 30%, #7dd3fc 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  color: '#7dd3fc',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  backgroundColor: 'rgba(14, 165, 233, 0.15)',
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(125, 211, 252, 0.3)',
+                  padding: '6px 16px',
+                  borderRadius: '9999px',
+                  marginBottom: '16px'
                 }}
               >
-                VLSI Simplified?
+                <Cpu size={15} color="#38bdf8" />
+                CORE PEDAGOGY
               </span>
-            </h2>
-            <p style={{ color: '#bae6fd', fontSize: '1.05rem', lineHeight: 1.65, margin: 0 }}>
-              Four foundational pillars that make complex silicon design intuitive, structured, and accessible.
-            </p>
-          </div>
+              <h2
+                style={{
+                  fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)',
+                  fontWeight: 800,
+                  color: '#ffffff',
+                  letterSpacing: '-0.025em',
+                  margin: '0 0 14px',
+                  lineHeight: 1.2
+                }}
+              >
+                Why Learn with{' '}
+                <span
+                  style={{
+                    background: 'linear-gradient(135deg, #ffffff 30%, #7dd3fc 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}
+                >
+                  VLSI Simplified?
+                </span>
+              </h2>
+              <p style={{ color: '#bae6fd', fontSize: '1.05rem', lineHeight: 1.65, margin: 0 }}>
+                Four foundational pillars that make complex silicon design intuitive, structured, and accessible.
+              </p>
+            </div>
+          </ScrollReveal>
 
           {/* Creative 4-Pillar Grid */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))',
               gap: '24px'
             }}
           >
@@ -688,100 +691,101 @@ export const HomePage = () => {
             ].map((pillar, idx) => {
               const Icon = pillar.icon;
               return (
-                <div
-                  key={idx}
-                  style={{
-                    backgroundColor: '#ffffff',
-                    borderRadius: '20px',
-                    padding: '30px 26px',
-                    border: '1.5px solid rgba(255, 255, 255, 0.85)',
-                    boxShadow: '0 16px 36px rgba(4, 28, 50, 0.28)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    position: 'relative',
-                    transition: 'transform 0.25s ease, box-shadow 0.25s ease',
-                    cursor: 'default'
-                  }}
-                  className="modern-card"
-                >
-                  {/* Top Row: Icon + Number Index */}
-                  <div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginBottom: '20px'
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: '50px',
-                          height: '50px',
-                          borderRadius: '14px',
-                          background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
-                          color: '#ffffff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          boxShadow: '0 6px 16px rgba(14, 165, 233, 0.35)'
-                        }}
-                      >
-                        <Icon size={25} />
-                      </div>
-                      <span
-                        style={{
-                          fontFamily: 'monospace',
-                          fontSize: '1.25rem',
-                          fontWeight: 800,
-                          color: '#0284c7',
-                          backgroundColor: '#f0f9ff',
-                          border: '1px solid #bae6fd',
-                          padding: '3px 10px',
-                          borderRadius: '8px'
-                        }}
-                      >
-                        {pillar.step}
-                      </span>
-                    </div>
-
-                    <h3
-                      style={{
-                        fontSize: '1.2rem',
-                        fontWeight: 800,
-                        color: '#0f172a',
-                        marginBottom: '10px',
-                        lineHeight: 1.3
-                      }}
-                    >
-                      {pillar.title}
-                    </h3>
-                    <p style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.65, margin: '0 0 20px' }}>
-                      {pillar.desc}
-                    </p>
-                  </div>
-
-                  {/* Bottom Feature Pill */}
+                <ScrollReveal key={idx} delay={idx * 90}>
                   <div
                     style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      alignSelf: 'flex-start',
-                      backgroundColor: '#f0f9ff',
-                      border: '1px solid #e0f2fe',
-                      padding: '4px 12px',
-                      borderRadius: '9999px',
-                      fontSize: '0.78rem',
-                      fontWeight: 700,
-                      color: '#0369a1'
+                      backgroundColor: '#ffffff',
+                      borderRadius: '20px',
+                      padding: '30px 26px',
+                      border: '1.5px solid rgba(255, 255, 255, 0.85)',
+                      boxShadow: '0 16px 36px rgba(4, 28, 50, 0.28)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      position: 'relative',
+                      height: '100%',
+                      cursor: 'default'
                     }}
+                    className="modern-card"
                   >
-                    <Sparkles size={12} color="#0ea5e9" />
-                    <span>{pillar.tag}</span>
+                    {/* Top Row: Icon + Number Index */}
+                    <div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '20px'
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            borderRadius: '14px',
+                            background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
+                            color: '#ffffff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 6px 16px rgba(14, 165, 233, 0.35)'
+                          }}
+                        >
+                          <Icon size={25} />
+                        </div>
+                        <span
+                          style={{
+                            fontFamily: 'monospace',
+                            fontSize: '1.25rem',
+                            fontWeight: 800,
+                            color: '#0284c7',
+                            backgroundColor: '#f0f9ff',
+                            border: '1px solid #bae6fd',
+                            padding: '3px 10px',
+                            borderRadius: '8px'
+                          }}
+                        >
+                          {pillar.step}
+                        </span>
+                      </div>
+
+                      <h3
+                        style={{
+                          fontSize: '1.2rem',
+                          fontWeight: 800,
+                          color: '#0f172a',
+                          marginBottom: '10px',
+                          lineHeight: 1.3
+                        }}
+                      >
+                        {pillar.title}
+                      </h3>
+                      <p style={{ fontSize: '0.92rem', color: '#475569', lineHeight: 1.65, margin: '0 0 20px' }}>
+                        {pillar.desc}
+                      </p>
+                    </div>
+
+                    {/* Bottom Feature Pill */}
+                    <div
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        alignSelf: 'flex-start',
+                        backgroundColor: '#f0f9ff',
+                        border: '1px solid #e0f2fe',
+                        padding: '4px 12px',
+                        borderRadius: '9999px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        color: '#0369a1'
+                      }}
+                    >
+                      <Sparkles size={12} color="#0ea5e9" />
+                      <span>{pillar.tag}</span>
+                    </div>
                   </div>
-                </div>
+                </ScrollReveal>
               );
             })}
           </div>
@@ -829,87 +833,211 @@ export const HomePage = () => {
 
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           {/* Section Header */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '20px',
-              marginBottom: '36px'
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '4px 12px',
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(56, 189, 248, 0.12)',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
-                  color: '#38bdf8',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.04em',
-                  marginBottom: '10px'
-                }}
-              >
-                <Sparkles size={14} color="#38bdf8" />
-                <span>PRACTICE & ASSESSMENTS</span>
+          <ScrollReveal direction="up">
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '20px',
+                marginBottom: '36px'
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 12px',
+                    borderRadius: '9999px',
+                    backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)',
+                    color: '#38bdf8',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.04em',
+                    marginBottom: '10px'
+                  }}
+                >
+                  <Sparkles size={14} color="#38bdf8" />
+                  <span>PRACTICE & ASSESSMENTS</span>
+                </div>
+                <h2
+                  className="heading-section"
+                  style={{
+                    color: '#ffffff',
+                    fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)',
+                    margin: '0 0 8px 0',
+                    textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+                  }}
+                >
+                  Test Your Knowledge
+                </h2>
+                <p
+                  style={{
+                    color: '#bae6fd',
+                    fontSize: '1rem',
+                    lineHeight: 1.6,
+                    maxWidth: '620px',
+                    margin: 0
+                  }}
+                >
+                  Challenge yourself and strengthen your VLSI concepts.
+                </p>
               </div>
-              <h2
-                className="heading-section"
-                style={{
-                  color: '#ffffff',
-                  fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)',
-                  margin: '0 0 8px 0',
-                  textShadow: '0 2px 10px rgba(0,0,0,0.3)'
-                }}
-              >
-                Test Your Knowledge
-              </h2>
-              <p
-                style={{
-                  color: '#bae6fd',
-                  fontSize: '1rem',
-                  lineHeight: 1.6,
-                  maxWidth: '620px',
-                  margin: 0
-                }}
-              >
-                Challenge yourself and strengthen your VLSI concepts.
-              </p>
-            </div>
 
-            <Link to="/quizzes" style={{ textDecoration: 'none' }}>
-              <Button
-                variant="outline"
-                size="md"
-                icon={ArrowRight}
-                iconPosition="right"
-                style={{
-                  borderColor: 'rgba(56, 189, 248, 0.5)',
-                  color: '#ffffff',
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  backdropFilter: 'blur(4px)'
-                }}
-              >
-                View All Quizzes
-              </Button>
-            </Link>
-          </div>
+              <Link to="/quizzes" style={{ textDecoration: 'none' }}>
+                <Button
+                  variant="outline"
+                  size="md"
+                  icon={ArrowRight}
+                  iconPosition="right"
+                  style={{
+                    borderColor: 'rgba(56, 189, 248, 0.5)',
+                    color: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(4px)'
+                  }}
+                >
+                  View All Quizzes
+                </Button>
+              </Link>
+            </div>
+          </ScrollReveal>
 
           {/* Subject Quiz Cards Grid (Max 3 on Homepage) */}
           {subjectQuizStats.length === 0 ? (
+            <ScrollReveal direction="up">
+              <div
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.96)',
+                  borderRadius: '20px',
+                  padding: 'clamp(28px, 5vw, 48px) clamp(20px, 4vw, 32px)',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 12px 36px rgba(0, 0, 0, 0.15)',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center'
+                }}
+              >
+                <div
+                  style={{
+                    width: '54px',
+                    height: '54px',
+                    borderRadius: '14px',
+                    backgroundColor: '#f0f9ff',
+                    color: '#0ea5e9',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '16px',
+                    border: '1.5px solid #bae6fd'
+                  }}
+                >
+                  <HelpCircle size={28} />
+                </div>
+
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+                  Quizzes Coming Soon
+                </h3>
+                <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '520px', lineHeight: 1.6, marginBottom: '20px' }}>
+                  Interactive topic-wise quizzes are currently being curated. Once published by the trainer via the Admin Panel, they will appear right here!
+                </p>
+
+                <a href={profile.youtube || APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                  <Button variant="secondary" icon={Youtube}>
+                    Watch Video Classes While Waiting
+                  </Button>
+                </a>
+              </div>
+            </ScrollReveal>
+          ) : (
+            <>
+              <div className="grid-cards">
+                {subjectQuizStats.slice(0, 3).map((sub, idx) => (
+                  <ScrollReveal key={sub.id} delay={idx * 90}>
+                    <SubjectQuizCard
+                      subject={sub}
+                      onExplore={() => navigate(`/quizzes?subject=${sub.slug || sub.id}`)}
+                    />
+                  </ScrollReveal>
+                ))}
+              </div>
+
+              {/* Length Control: Show View All Quizzes button if more than 3 subjects exist */}
+              {subjectQuizStats.length > 3 && (
+                <ScrollReveal direction="up" delay={200}>
+                  <div style={{ textAlign: 'center', marginTop: '36px' }}>
+                    <Link to="/quizzes" style={{ textDecoration: 'none' }}>
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        icon={ArrowRight}
+                        iconPosition="right"
+                        style={{
+                          backgroundColor: '#38bdf8',
+                          color: '#082f49',
+                          fontWeight: 700,
+                          border: 'none',
+                          boxShadow: '0 4px 16px rgba(56, 189, 248, 0.35)'
+                        }}
+                      >
+                        View All Quizzes →
+                      </Button>
+                    </Link>
+                  </div>
+                </ScrollReveal>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 6. WORKSHOPS PREVIEW (COMING SOON OR DYNAMIC CARDS)                      */}
+      {/* ========================================================================= */}
+      <section id="workshops" className="container" style={{ scrollMarginTop: '65px' }}>
+        <ScrollReveal direction="up">
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
+            <div>
+              <span
+                style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#0ea5e9',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  display: 'block',
+                  marginBottom: '6px'
+                }}
+              >
+                LIVE INTERACTION
+              </span>
+              <h2 className="heading-section" style={{ margin: 0 }}>
+                Upcoming VLSI Workshops
+              </h2>
+            </div>
+
+            <Link to="/workshops" style={{ textDecoration: 'none' }}>
+              <Button variant="outline" icon={Calendar} iconPosition="left">
+                All Workshops
+              </Button>
+            </Link>
+          </div>
+        </ScrollReveal>
+
+        {initialWorkshopsList.length === 0 ? (
+          <ScrollReveal direction="up">
             <div
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.96)',
+                backgroundColor: '#ffffff',
                 borderRadius: '20px',
-                padding: '48px 32px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.15)',
+                padding: 'clamp(28px, 5vw, 48px) clamp(20px, 4vw, 32px)',
+                border: '2px dashed #bae6fd',
+                boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
                 textAlign: 'center',
                 display: 'flex',
                 flexDirection: 'column',
@@ -930,182 +1058,71 @@ export const HomePage = () => {
                   border: '1.5px solid #bae6fd'
                 }}
               >
-                <HelpCircle size={28} />
+                <Calendar size={28} />
               </div>
 
               <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-                Quizzes Coming Soon
+                Workshops Coming Soon
               </h3>
-              <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '520px', lineHeight: 1.6, marginBottom: '20px' }}>
-                Interactive topic-wise quizzes are currently being curated. Once published by the trainer via the Admin Panel, they will appear right here!
+              <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '520px', lineHeight: 1.6, marginBottom: '22px' }}>
+                Live interactive bootcamps on RTL Design, SystemVerilog, and UVM are being scheduled. Check back soon or pre-register on WhatsApp!
               </p>
 
-              <a href={profile.youtube || APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                <Button variant="secondary" icon={Youtube}>
-                  Watch Video Classes While Waiting
+              <a
+                href={`${APP_CONFIG.whatsappUrl}?text=${encodeURIComponent('Hi Trainer! Please notify me when upcoming live workshops and bootcamps are announced.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none' }}
+              >
+                <Button variant="primary" icon={MessageCircle}>
+                  Notify Me on WhatsApp
                 </Button>
               </a>
             </div>
-          ) : (
-            <>
-              <div className="grid-cards">
-                {subjectQuizStats.slice(0, 3).map((sub) => (
-                  <SubjectQuizCard
-                    key={sub.id}
-                    subject={sub}
-                    onExplore={() => navigate(`/quizzes?subject=${sub.slug || sub.id}`)}
-                  />
-                ))}
-              </div>
-
-              {/* Length Control: Show View All Quizzes button if more than 3 subjects exist */}
-              {subjectQuizStats.length > 3 && (
-                <div style={{ textAlign: 'center', marginTop: '36px' }}>
-                  <Link to="/quizzes" style={{ textDecoration: 'none' }}>
-                    <Button
-                      variant="primary"
-                      size="lg"
-                      icon={ArrowRight}
-                      iconPosition="right"
-                      style={{
-                        backgroundColor: '#38bdf8',
-                        color: '#082f49',
-                        fontWeight: 700,
-                        border: 'none',
-                        boxShadow: '0 4px 16px rgba(56, 189, 248, 0.35)'
-                      }}
-                    >
-                      View All Quizzes →
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 6. WORKSHOPS PREVIEW (COMING SOON OR DYNAMIC CARDS)                      */}
-      {/* ========================================================================= */}
-      <section id="workshops" className="container" style={{ scrollMarginTop: '65px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
-          <div>
-            <span
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#0ea5e9',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                display: 'block',
-                marginBottom: '6px'
-              }}
-            >
-              LIVE INTERACTION
-            </span>
-            <h2 className="heading-section" style={{ margin: 0 }}>
-              Upcoming VLSI Workshops
-            </h2>
-          </div>
-
-          <Link to="/workshops" style={{ textDecoration: 'none' }}>
-            <Button variant="outline" icon={Calendar} iconPosition="left">
-              All Workshops
-            </Button>
-          </Link>
-        </div>
-
-        {initialWorkshopsList.length === 0 ? (
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '20px',
-              padding: '48px 32px',
-              border: '2px dashed #bae6fd',
-              boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}
-          >
-            <div
-              style={{
-                width: '54px',
-                height: '54px',
-                borderRadius: '14px',
-                backgroundColor: '#f0f9ff',
-                color: '#0ea5e9',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '16px',
-                border: '1.5px solid #bae6fd'
-              }}
-            >
-              <Calendar size={28} />
-            </div>
-
-            <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-              Workshops Coming Soon
-            </h3>
-            <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '520px', lineHeight: 1.6, marginBottom: '22px' }}>
-              Live interactive bootcamps on RTL Design, SystemVerilog, and UVM are being scheduled. Check back soon or pre-register on WhatsApp!
-            </p>
-
-            <a
-              href={`${APP_CONFIG.whatsappUrl}?text=${encodeURIComponent('Hi Trainer! Please notify me when upcoming live workshops and bootcamps are announced.')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: 'none' }}
-            >
-              <Button variant="primary" icon={MessageCircle}>
-                Notify Me on WhatsApp
-              </Button>
-            </a>
-          </div>
+          </ScrollReveal>
         ) : (
           <div className="grid-cards">
-            {initialWorkshopsList.slice(0, 3).map((ws) => (
-              <div
-                key={ws.id}
-                style={{
-                  backgroundColor: '#ffffff',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  border: '1px solid #e0f2fe',
-                  boxShadow: '0 2px 10px rgba(14, 165, 233, 0.05)',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-                className="modern-card"
-              >
-                <div style={{ width: '100%', height: '160px', overflow: 'hidden' }}>
-                  <img src={ws.image} alt={ws.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-                    {ws.title}
-                  </h3>
-                  <p style={{ fontSize: '0.875rem', color: '#475569', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
-                    {ws.description}
-                  </p>
-                  <div style={{ fontSize: '0.825rem', color: '#0369a1', fontWeight: 600, marginBottom: '16px' }}>
-                    📅 {ws.date} • {ws.duration}
+            {initialWorkshopsList.slice(0, 3).map((ws, idx) => (
+              <ScrollReveal key={ws.id} delay={idx * 90}>
+                <div
+                  style={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    border: '1px solid #e0f2fe',
+                    boxShadow: '0 2px 10px rgba(14, 165, 233, 0.05)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%'
+                  }}
+                  className="modern-card"
+                >
+                  <div style={{ width: '100%', height: '160px', overflow: 'hidden' }}>
+                    <img src={ws.image} alt={ws.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
-                  <a
-                    href={`${APP_CONFIG.whatsappUrl}?text=${encodeURIComponent(ws.whatsappMessage)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'none' }}
-                  >
-                    <Button variant="secondary" size="sm" icon={MessageCircle} style={{ width: '100%' }}>
-                      Chat on WhatsApp
-                    </Button>
-                  </a>
+                  <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
+                      {ws.title}
+                    </h3>
+                    <p style={{ fontSize: '0.875rem', color: '#475569', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
+                      {ws.description}
+                    </p>
+                    <div style={{ fontSize: '0.825rem', color: '#0369a1', fontWeight: 600, marginBottom: '16px' }}>
+                      📅 {ws.date} • {ws.duration}
+                    </div>
+                    <a
+                      href={`${APP_CONFIG.whatsappUrl}?text=${encodeURIComponent(ws.whatsappMessage)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <Button variant="secondary" size="sm" icon={MessageCircle} style={{ width: '100%' }}>
+                        Chat on WhatsApp
+                      </Button>
+                    </a>
+                  </div>
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         )}
@@ -1115,310 +1132,317 @@ export const HomePage = () => {
       {/* 7. YOUTUBE CTA BANNER                                                     */}
       {/* ========================================================================= */}
       <section className="container">
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '24px',
-            padding: '52px 40px',
-            border: '2px solid #bae6fd',
-            boxShadow: '0 12px 32px rgba(14, 165, 233, 0.08)',
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            background: 'linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%)'
-          }}
-        >
+        <ScrollReveal direction="up">
           <div
             style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
-              backgroundColor: '#ff0000',
+              backgroundColor: '#ffffff',
+              borderRadius: '24px',
+              padding: 'clamp(32px, 5vw, 52px) clamp(20px, 4vw, 40px)',
+              border: '2px solid #bae6fd',
+              boxShadow: '0 12px 32px rgba(14, 165, 233, 0.08)',
+              textAlign: 'center',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-              marginBottom: '20px',
-              boxShadow: '0 6px 20px rgba(255, 0, 0, 0.35)'
+              background: 'linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%)'
             }}
           >
-            <Youtube size={34} />
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                backgroundColor: '#ff0000',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                marginBottom: '20px',
+                boxShadow: '0 6px 20px rgba(255, 0, 0, 0.35)'
+              }}
+            >
+              <Youtube size={34} />
+            </div>
+
+            <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.35rem)', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>
+              Learn with Us on YouTube
+            </h2>
+
+            <p style={{ color: '#475569', fontSize: 'clamp(0.95rem, 1.8vw, 1.05rem)', maxWidth: '600px', lineHeight: 1.6, marginBottom: '28px' }}>
+              Subscribe to <strong>@VLSI_Simlified</strong> for daily tutorial updates, architecture walkthroughs, and industry interview series.
+            </p>
+
+            <a
+              href={profile.youtube || APP_CONFIG.youtubeChannel}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              <Button variant="youtube" size="lg" icon={Youtube}>
+                Subscribe on YouTube
+              </Button>
+            </a>
           </div>
-
-          <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.35rem)', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>
-            Learn with Us on YouTube
-          </h2>
-
-          <p style={{ color: '#475569', fontSize: '1.05rem', maxWidth: '600px', lineHeight: 1.6, marginBottom: '28px' }}>
-            Subscribe to <strong>@VLSI_Simlified</strong> for daily tutorial updates, architecture walkthroughs, and industry interview series.
-          </p>
-
-          <a
-            href={profile.youtube || APP_CONFIG.youtubeChannel}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
-            <Button variant="youtube" size="lg" icon={Youtube}>
-              Subscribe on YouTube
-            </Button>
-          </a>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* ========================================================================= */}
       {/* 8. CONTACT SECTION                                                        */}
       {/* ========================================================================= */}
       <section id="contact" className="container" style={{ scrollMarginTop: '65px' }}>
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '24px',
-            padding: '48px',
-            border: '1.5px solid #e0f2fe',
-            boxShadow: '0 6px 24px rgba(14, 165, 233, 0.05)',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '48px'
-          }}
-        >
-          {/* Left: Contact Info & WhatsApp CTA */}
-          <div>
-            <span
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#0ea5e9',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                display: 'block',
-                marginBottom: '8px'
-              }}
-            >
-              GET IN TOUCH
-            </span>
-            <h2 className="heading-section" style={{ marginBottom: '12px' }}>
-              Let's Connect
-            </h2>
-            <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6, marginBottom: '28px' }}>
-              Have a question about VLSI, courses, workshops, or collaboration? Reach out directly.
-            </p>
-
-            {/* Quick WhatsApp Block */}
-            <div
-              style={{
-                padding: '20px',
-                borderRadius: '16px',
-                backgroundColor: '#f0fdf4',
-                border: '1.5px solid #bbf7d0',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                marginBottom: '28px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '50%',
-                    backgroundColor: '#25D366',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#ffffff'
-                  }}
-                >
-                  <MessageCircle size={20} />
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#166534', margin: 0 }}>
-                    Have a quick question?
-                  </h4>
-                  <span style={{ fontSize: '0.8rem', color: '#15803d' }}>Fastest response on WhatsApp</span>
-                </div>
-              </div>
-
-              <a
-                href={APP_CONFIG.whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none' }}
-              >
-                <button
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 16px',
-                    backgroundColor: '#25D366',
-                    color: '#ffffff',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <MessageCircle size={15} />
-                  <span>Chat on WhatsApp</span>
-                </button>
-              </a>
-            </div>
-
-            {/* Direct Links */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.9rem', color: '#475569' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Mail size={18} color="#0ea5e9" />
-                <a href={`mailto:${profile.email || APP_CONFIG.contactEmail}`} style={{ color: '#0f172a', textDecoration: 'none' }}>
-                  {profile.email || APP_CONFIG.contactEmail}
-                </a>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Youtube size={18} color="#ff0000" />
-                <a href={profile.youtube || APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ color: '#0ea5e9', fontWeight: 600 }}>
-                  {profile.youtube ? profile.youtube.replace(/^https?:\/\/(www\.)?/, '') : 'youtube.com/@VLSI_Simlified'}
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Contact Form */}
-          <div>
-            {contactSubmitted ? (
-              <div
+        <ScrollReveal direction="up">
+          <div
+            style={{
+              backgroundColor: '#ffffff',
+              borderRadius: '24px',
+              padding: 'clamp(24px, 4.5vw, 48px)',
+              border: '1.5px solid #e0f2fe',
+              boxShadow: '0 6px 24px rgba(14, 165, 233, 0.05)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+              gap: 'clamp(24px, 4vw, 48px)'
+            }}
+          >
+            {/* Left: Contact Info & WhatsApp CTA */}
+            <div>
+              <span
                 style={{
-                  padding: '40px 20px',
-                  textAlign: 'center',
-                  backgroundColor: '#f0f9ff',
-                  borderRadius: '16px',
-                  border: '1px solid #bae6fd'
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#0ea5e9',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  display: 'block',
+                  marginBottom: '8px'
                 }}
               >
-                <CheckCircle2 size={40} color="#0ea5e9" style={{ margin: '0 auto 12px' }} />
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>
-                  Message Received!
-                </h3>
-                <p style={{ color: '#475569', fontSize: '0.9rem', marginBottom: '18px' }}>
-                  Thank you for reaching out. We will get back to you shortly.
-                </p>
-                <Button variant="outline" size="sm" onClick={() => setContactSubmitted(false)}>
-                  Send Another Message
-                </Button>
-              </div>
-            ) : (
-              <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
-                      Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={contactData.name}
-                      onChange={(e) => setContactData({ ...contactData, name: e.target.value })}
-                      placeholder="Your Full Name"
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        border: '1.5px solid #cbd5e1',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
+                GET IN TOUCH
+              </span>
+              <h2 className="heading-section" style={{ marginBottom: '12px' }}>
+                Let's Connect
+              </h2>
+              <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6, marginBottom: '28px' }}>
+                Have a question about VLSI, courses, workshops, or collaboration? Reach out directly.
+              </p>
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={contactData.email}
-                      onChange={(e) => setContactData({ ...contactData, email: e.target.value })}
-                      placeholder="name@domain.com"
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        border: '1.5px solid #cbd5e1',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
-                      Phone Number (Optional)
-                    </label>
-                    <input
-                      type="tel"
-                      value={contactData.phone}
-                      onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
-                      placeholder="+91..."
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        border: '1.5px solid #cbd5e1',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
-                      Subject
-                    </label>
-                    <input
-                      type="text"
-                      value={contactData.subject}
-                      onChange={(e) => setContactData({ ...contactData, subject: e.target.value })}
-                      placeholder="Course query, workshop, etc."
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        border: '1.5px solid #cbd5e1',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
-                    Message *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={contactData.message}
-                    onChange={(e) => setContactData({ ...contactData, message: e.target.value })}
-                    placeholder="Write your question or request..."
+              {/* Quick WhatsApp Block */}
+              <div
+                style={{
+                  padding: '18px',
+                  borderRadius: '16px',
+                  backgroundColor: '#f0fdf4',
+                  border: '1.5px solid #bbf7d0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  marginBottom: '28px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div
                     style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      borderRadius: '8px',
-                      border: '1.5px solid #cbd5e1',
-                      outline: 'none',
-                      resize: 'vertical'
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      backgroundColor: '#25D366',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#ffffff',
+                      flexShrink: 0
                     }}
-                  />
+                  >
+                    <MessageCircle size={20} />
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#166534', margin: 0 }}>
+                      Have a quick question?
+                    </h4>
+                    <span style={{ fontSize: '0.8rem', color: '#15803d' }}>Fastest response on WhatsApp</span>
+                  </div>
                 </div>
 
-                <Button type="submit" variant="primary" size="md" icon={Send}>
-                  Send Message
-                </Button>
-              </form>
-            )}
+                <a
+                  href={APP_CONFIG.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <button
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 16px',
+                      backgroundColor: '#25D366',
+                      color: '#ffffff',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      border: 'none',
+                      maxWidth: '100%'
+                    }}
+                  >
+                    <MessageCircle size={15} />
+                    <span>Chat on WhatsApp</span>
+                  </button>
+                </a>
+              </div>
+
+              {/* Direct Links */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.9rem', color: '#475569', wordBreak: 'break-word' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Mail size={18} color="#0ea5e9" style={{ flexShrink: 0 }} />
+                  <a href={`mailto:${profile.email || APP_CONFIG.contactEmail}`} style={{ color: '#0f172a', textDecoration: 'none' }}>
+                    {profile.email || APP_CONFIG.contactEmail}
+                  </a>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Youtube size={18} color="#ff0000" style={{ flexShrink: 0 }} />
+                  <a href={profile.youtube || APP_CONFIG.youtubeChannel} target="_blank" rel="noopener noreferrer" style={{ color: '#0ea5e9', fontWeight: 600 }}>
+                    {profile.youtube ? profile.youtube.replace(/^https?:\/\/(www\.)?/, '') : 'youtube.com/@VLSI_Simlified'}
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Contact Form */}
+            <div>
+              {contactSubmitted ? (
+                <div
+                  style={{
+                    padding: '40px 20px',
+                    textAlign: 'center',
+                    backgroundColor: '#f0f9ff',
+                    borderRadius: '16px',
+                    border: '1px solid #bae6fd'
+                  }}
+                >
+                  <CheckCircle2 size={40} color="#0ea5e9" style={{ margin: '0 auto 12px' }} />
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>
+                    Message Received!
+                  </h3>
+                  <p style={{ color: '#475569', fontSize: '0.9rem', marginBottom: '18px' }}>
+                    Thank you for reaching out. We will get back to you shortly.
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => setContactSubmitted(false)}>
+                    Send Another Message
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: '12px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                        Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={contactData.name}
+                        onChange={(e) => setContactData({ ...contactData, name: e.target.value })}
+                        placeholder="Your Full Name"
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={contactData.email}
+                        onChange={(e) => setContactData({ ...contactData, email: e.target.value })}
+                        placeholder="name@domain.com"
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: '12px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                        Phone Number (Optional)
+                      </label>
+                      <input
+                        type="tel"
+                        value={contactData.phone}
+                        onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
+                        placeholder="+91..."
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                        Subject
+                      </label>
+                      <input
+                        type="text"
+                        value={contactData.subject}
+                        onChange={(e) => setContactData({ ...contactData, subject: e.target.value })}
+                        placeholder="Course query, workshop, etc."
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: '1.5px solid #cbd5e1',
+                          outline: 'none'
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                      Message *
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={contactData.message}
+                      onChange={(e) => setContactData({ ...contactData, message: e.target.value })}
+                      placeholder="Write your question or request..."
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        border: '1.5px solid #cbd5e1',
+                        outline: 'none',
+                        resize: 'vertical'
+                      }}
+                    />
+                  </div>
+
+                  <Button type="submit" variant="primary" size="md" icon={Send} style={{ alignSelf: 'flex-start' }}>
+                    Send Message
+                  </Button>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
     </div>
   );

@@ -57,6 +57,22 @@ export const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [location.pathname]);
 
+  // Close mobile menu on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
   const handleNavClick = (sectionId, e) => {
     e.preventDefault();
     setMobileMenuOpen(false);
@@ -283,82 +299,171 @@ export const Navbar = () => {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#0f172a',
-            padding: '5px',
-            borderRadius: '6px',
-            backgroundColor: '#f0f9ff',
-            border: '1px solid #bae6fd',
-            cursor: 'pointer'
+            padding: '8px',
+            minWidth: '40px',
+            minHeight: '40px',
+            borderRadius: '8px',
+            backgroundColor: mobileMenuOpen ? '#e0f2fe' : '#f0f9ff',
+            border: '1.5px solid #bae6fd',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
           }}
           className="mobile-toggle"
-          aria-label="Toggle navigation menu"
+          aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          {mobileMenuOpen ? <X size={20} color="#0284c7" /> : <Menu size={20} color="#0f172a" />}
         </button>
       </div>
+
+      {/* Mobile Backdrop Overlay */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            top: '52px',
+            backgroundColor: 'rgba(7, 26, 43, 0.45)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            zIndex: 998,
+            animation: 'fadeInOverlay 0.2s ease forwards'
+          }}
+          className="mobile-backdrop"
+          aria-hidden="true"
+        />
+      )}
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div
           style={{
+            position: 'relative',
+            zIndex: 999,
             backgroundColor: '#ffffff',
             borderTop: '1px solid #e0f2fe',
+            borderBottom: '1px solid #bae6fd',
             padding: '16px 20px 24px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
-            boxShadow: '0 12px 24px rgba(14, 165, 233, 0.08)'
+            gap: '6px',
+            boxShadow: '0 16px 32px rgba(14, 165, 233, 0.12)',
+            animation: 'slideDownDrawer 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards'
           }}
           className="mobile-drawer"
         >
-          {navLinks.map((link) => (
+          {navLinks.map((link) => {
+            const isActive = location.pathname === '/' && activeSection === link.sectionId;
+            return (
+              <a
+                key={link.name}
+                href={`#${link.sectionId}`}
+                onClick={(e) => handleNavClick(link.sectionId, e)}
+                style={{
+                  fontSize: '1rem',
+                  fontWeight: isActive ? '700' : '600',
+                  color: isActive ? '#0284c7' : '#1e293b',
+                  backgroundColor: isActive ? '#f0f9ff' : 'transparent',
+                  padding: '12px 14px',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  textDecoration: 'none',
+                  minHeight: '44px',
+                  transition: 'background-color 0.15s ease'
+                }}
+              >
+                <span>{link.name}</span>
+                {isActive && (
+                  <span
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      backgroundColor: '#0ea5e9'
+                    }}
+                  />
+                )}
+              </a>
+            );
+          })}
+
+          <div style={{ marginTop: '8px', paddingTop: '12px', borderTop: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <a
-              key={link.name}
-              href={`#${link.sectionId}`}
-              onClick={(e) => handleNavClick(link.sectionId, e)}
+              href={youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileMenuOpen(false)}
               style={{
-                fontSize: '1rem',
-                fontWeight: activeSection === link.sectionId ? '700' : '600',
-                color: activeSection === link.sectionId ? '#0ea5e9' : '#1e293b',
-                padding: '8px 4px',
-                display: 'block',
-                textDecoration: 'none'
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                padding: '12px 16px',
+                backgroundColor: '#ff0000',
+                color: '#ffffff',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.925rem',
+                textDecoration: 'none',
+                minHeight: '46px',
+                boxShadow: '0 2px 8px rgba(255, 0, 0, 0.25)'
               }}
             >
-              {link.name}
+              <Youtube size={18} />
+              <span>Watch on YouTube</span>
             </a>
-          ))}
 
-          <a
-            href={youtubeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => setMobileMenuOpen(false)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              padding: '11px 16px',
-              backgroundColor: '#ff0000',
-              color: '#ffffff',
-              borderRadius: '8px',
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              marginTop: '6px',
-              textDecoration: 'none'
-            }}
-          >
-            <Youtube size={17} />
-            <span>Watch on YouTube</span>
-          </a>
+            {isAuthenticated && (
+              <Link
+                to="/admin/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '11px 16px',
+                  backgroundColor: '#f0f9ff',
+                  border: '1.5px solid #bae6fd',
+                  color: '#0284c7',
+                  borderRadius: '10px',
+                  fontWeight: 700,
+                  fontSize: '0.875rem',
+                  textDecoration: 'none',
+                  minHeight: '44px'
+                }}
+              >
+                <Shield size={16} />
+                <span>Trainer Admin Portal</span>
+              </Link>
+            )}
+          </div>
         </div>
       )}
 
       <style>{`
+        @keyframes fadeInOverlay {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideDownDrawer {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
         @media (min-width: 860px) {
           .desktop-nav { display: flex !important; }
           .mobile-toggle { display: none !important; }
           .mobile-drawer { display: none !important; }
+          .mobile-backdrop { display: none !important; }
         }
         .nav-link-item:hover {
           color: #0ea5e9 !important;
