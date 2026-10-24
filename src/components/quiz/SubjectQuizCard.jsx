@@ -34,6 +34,7 @@ export const SubjectQuizCard = ({ subject, onExplore }) => {
         boxShadow: '0 8px 24px rgba(7, 26, 43, 0.06)',
         display: 'flex',
         flexDirection: 'column',
+        height: '100%',
         cursor: 'pointer',
         transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease'
       }}
@@ -45,7 +46,7 @@ export const SubjectQuizCard = ({ subject, onExplore }) => {
         style={{
           position: 'relative',
           width: '100%',
-          height: '180px',
+          aspectRatio: '16 / 9',
           overflow: 'hidden',
           backgroundColor: '#0284c7'
         }}

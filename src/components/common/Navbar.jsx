@@ -20,7 +20,6 @@ export const Navbar = () => {
     { name: 'About', sectionId: 'about' },
     { name: 'Courses', sectionId: 'courses' },
     { name: 'Quizzes', sectionId: 'quizzes' },
-    { name: 'Workshops', sectionId: 'workshops' },
     { name: 'Contact', sectionId: 'contact' }
   ];
 
@@ -30,7 +29,7 @@ export const Navbar = () => {
       setScrolled(window.scrollY > 20);
 
       if (location.pathname === '/') {
-        const sections = ['contact', 'workshops', 'quizzes', 'courses', 'about', 'home'];
+        const sections = ['contact', 'quizzes', 'courses', 'about', 'home'];
         for (const sec of sections) {
           if (sec === 'home') {
             if (window.scrollY < 300) {

@@ -28,6 +28,7 @@ export const SubjectCard = ({ subject }) => {
         boxShadow: '0 4px 14px rgba(14, 165, 233, 0.06)',
         display: 'flex',
         flexDirection: 'column',
+        height: '100%',
         cursor: 'pointer',
         transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease'
       }}
@@ -39,7 +40,7 @@ export const SubjectCard = ({ subject }) => {
         style={{
           position: 'relative',
           width: '100%',
-          height: '190px',
+          aspectRatio: '16 / 9',
           overflow: 'hidden',
           backgroundColor: '#f0f9ff'
         }}
@@ -121,7 +122,12 @@ export const SubjectCard = ({ subject }) => {
             fontWeight: 800,
             color: '#0f172a',
             marginBottom: '10px',
-            lineHeight: 1.3
+            lineHeight: 1.3,
+            minHeight: '3.25rem',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden'
           }}
         >
           {subject.name}
@@ -133,19 +139,20 @@ export const SubjectCard = ({ subject }) => {
             lineHeight: 1.6,
             color: '#475569',
             marginBottom: '24px',
-            flex: 1,
+            minHeight: '4.2rem',
             display: '-webkit-box',
             WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden'
           }}
         >
-          {subject.description}
+          {subject.description || '\u00A0'}
         </p>
 
         {/* Card Footer: [Watch on YouTube (Red)] + [Explore Course →] */}
         <div
           style={{
+            marginTop: 'auto',
             paddingTop: '16px',
             borderTop: '1px solid #f0f9ff',
             display: 'flex',

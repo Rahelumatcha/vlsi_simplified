@@ -183,9 +183,6 @@ export const Footer = () => {
                 <Link to="/quizzes" className="footer-link">Quizzes & Practice</Link>
               </li>
               <li>
-                <Link to="/workshops" className="footer-link">Workshops</Link>
-              </li>
-              <li>
                 <Link to="/contact" className="footer-link">Contact</Link>
               </li>
             </ul>

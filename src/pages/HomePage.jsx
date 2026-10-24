@@ -30,7 +30,6 @@ import { Button } from '../components/common/Button';
 import { SubjectCard } from '../components/courses/SubjectCard';
 import { QuizCard } from '../components/quiz/QuizCard';
 import { SubjectQuizCard } from '../components/quiz/SubjectQuizCard';
-import { initialWorkshopsList } from './WorkshopsPage';
 import { courseService } from '../services/courseService';
 import { quizService } from '../services/quizService';
 import { portfolioService } from '../services/portfolioService';
@@ -256,8 +255,7 @@ export const HomePage = () => {
                 backgroundColor: 'rgba(15, 23, 42, 0.5)',
                 color: '#38bdf8',
                 borderColor: '#38bdf8',
-                backdropFilter: 'blur(8px)',
-                textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)'
+                backdropFilter: 'blur(8px)'
               }}
               className="hero-explore-btn"
               onClick={handleScrollToCourses}
@@ -1004,137 +1002,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {/* ========================================================================= */}
-      {/* 6. WORKSHOPS PREVIEW (COMING SOON OR DYNAMIC CARDS)                      */}
-      {/* ========================================================================= */}
-      <section id="workshops" className="container" style={{ scrollMarginTop: '65px' }}>
-        <ScrollReveal direction="up">
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
-            <div>
-              <span
-                style={{
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: '#0ea5e9',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  display: 'block',
-                  marginBottom: '6px'
-                }}
-              >
-                LIVE INTERACTION
-              </span>
-              <h2 className="heading-section" style={{ margin: 0 }}>
-                Upcoming VLSI Workshops
-              </h2>
-            </div>
 
-            <Link to="/workshops" style={{ textDecoration: 'none' }}>
-              <Button variant="outline" icon={Calendar} iconPosition="left">
-                All Workshops
-              </Button>
-            </Link>
-          </div>
-        </ScrollReveal>
-
-        {initialWorkshopsList.length === 0 ? (
-          <ScrollReveal direction="up">
-            <div
-              style={{
-                backgroundColor: '#ffffff',
-                borderRadius: '20px',
-                padding: 'clamp(28px, 5vw, 48px) clamp(20px, 4vw, 32px)',
-                border: '2px dashed #bae6fd',
-                boxShadow: '0 4px 18px rgba(14, 165, 233, 0.05)',
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
-              }}
-            >
-              <div
-                style={{
-                  width: '54px',
-                  height: '54px',
-                  borderRadius: '14px',
-                  backgroundColor: '#f0f9ff',
-                  color: '#0ea5e9',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: '16px',
-                  border: '1.5px solid #bae6fd'
-                }}
-              >
-                <Calendar size={28} />
-              </div>
-
-              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-                Workshops Coming Soon
-              </h3>
-              <p style={{ color: '#64748b', fontSize: '0.95rem', maxWidth: '520px', lineHeight: 1.6, marginBottom: '22px' }}>
-                Live interactive bootcamps on RTL Design, SystemVerilog, and UVM are being scheduled. Check back soon or pre-register on WhatsApp!
-              </p>
-
-              <a
-                href={`${APP_CONFIG.whatsappUrl}?text=${encodeURIComponent('Hi Trainer! Please notify me when upcoming live workshops and bootcamps are announced.')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none' }}
-              >
-                <Button variant="primary" icon={MessageCircle}>
-                  Notify Me on WhatsApp
-                </Button>
-              </a>
-            </div>
-          </ScrollReveal>
-        ) : (
-          <div className="grid-cards">
-            {initialWorkshopsList.slice(0, 3).map((ws, idx) => (
-              <ScrollReveal key={ws.id} delay={idx * 90}>
-                <div
-                  style={{
-                    backgroundColor: '#ffffff',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    border: '1px solid #e0f2fe',
-                    boxShadow: '0 2px 10px rgba(14, 165, 233, 0.05)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%'
-                  }}
-                  className="modern-card"
-                >
-                  <div style={{ width: '100%', height: '160px', overflow: 'hidden' }}>
-                    <img src={ws.image} alt={ws.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>
-                      {ws.title}
-                    </h3>
-                    <p style={{ fontSize: '0.875rem', color: '#475569', lineHeight: 1.6, marginBottom: '16px', flex: 1 }}>
-                      {ws.description}
-                    </p>
-                    <div style={{ fontSize: '0.825rem', color: '#0369a1', fontWeight: 600, marginBottom: '16px' }}>
-                      📅 {ws.date} • {ws.duration}
-                    </div>
-                    <a
-                      href={`${APP_CONFIG.whatsappUrl}?text=${encodeURIComponent(ws.whatsappMessage)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      <Button variant="secondary" size="sm" icon={MessageCircle} style={{ width: '100%' }}>
-                        Chat on WhatsApp
-                      </Button>
-                    </a>
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        )}
-      </section>
 
       {/* ========================================================================= */}
       {/* 7. YOUTUBE CTA BANNER                                                     */}
