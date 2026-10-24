@@ -148,18 +148,18 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-social-btn whatsapp"
-                title="Chat on WhatsApp"
+                title={`Chat on WhatsApp (${APP_CONFIG.whatsappDisplayNumber || '+91 8143286575'})`}
               >
                 <MessageCircle size={18} />
               </a>
 
-              <Link
-                to="/contact"
+              <a
+                href="mailto:sanathrtldv@gmail.com"
                 className="footer-social-btn mail"
-                title="Email Trainer"
+                title="Email Trainer (sanathrtldv@gmail.com)"
               >
                 <Mail size={18} />
-              </Link>
+              </a>
             </div>
           </div>
 

@@ -43,12 +43,17 @@ import { ScrollReveal } from '../components/common/ScrollReveal';
 import { AnimatedCounter } from '../components/common/AnimatedCounter';
 import { useToast } from '../contexts/ToastContext';
 import { navigateToSection } from '../utils/navigationHelper';
+import heroVideo from '../assets/vlsi_vd.mp4';
 
 export const HomePage = () => {
-  const [profile, setProfile] = useState(() => ({
-    ...initialTrainerProfile,
-    ...publicDataService.getCachedTrainer()
-  }));
+  const [profile, setProfile] = useState(() => {
+    const raw = {
+      ...initialTrainerProfile,
+      ...publicDataService.getCachedTrainer()
+    };
+    if (!raw.email || raw.email === 'sanath@gmail.com') raw.email = 'sanathrtldv@gmail.com';
+    return raw;
+  });
   const [subjects, setSubjects] = useState(() => {
     const pubSubjects = publicDataService.getCachedSubjects().filter((s) => s.published !== false);
     const pubClasses = publicDataService.getCachedClasses().filter((c) => c.published !== false);
@@ -81,7 +86,12 @@ export const HomePage = () => {
         const dynamicSubjects = courseService.attachDynamicClassCounts(subjectsData, classesData);
         const dynamicQuizStats = quizService.calculateSubjectQuizStats(subjectsData, quizzesData);
 
-        setProfile(trainerProfile || {});
+        if (trainerProfile && typeof trainerProfile === 'object') {
+          if (!trainerProfile.email || trainerProfile.email === 'sanath@gmail.com') {
+            trainerProfile.email = 'sanathrtldv@gmail.com';
+          }
+          setProfile(trainerProfile);
+        }
         setSubjects(dynamicSubjects);
         setSubjectQuizStats(dynamicQuizStats);
       } catch (err) {
@@ -114,55 +124,50 @@ export const HomePage = () => {
         id="home"
         style={{
           position: 'relative',
-          minHeight: '680px',
+          minHeight: 'clamp(540px, 64vh, 660px)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           overflow: 'hidden',
-          backgroundColor: '#082f49',
+          backgroundColor: '#071f33',
           scrollMarginTop: '65px'
         }}
         className="hero-video-section"
       >
-        {/* Full Background Video (Autoplay, Loop, Muted, PlaysInline) */}
+        {/* Full Background Video (vlsi_vd.mp4 16:9 ratio, uncropped with Autoplay, Loop, Muted, PlaysInline - No image poster) */}
         <video
           autoPlay
           loop
           muted
           playsInline
-          poster={APP_CONFIG.assets.heroVideoPoster}
+          aria-hidden="true"
+          tabIndex={-1}
           style={{
             position: 'absolute',
             inset: 0,
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
-            zIndex: 1,
-            opacity: 0.8
+            objectFit: 'contain',
+            objectPosition: 'center',
+            zIndex: 0,
+            pointerEvents: 'none',
+            opacity: 1,
+            filter: 'brightness(0.44)'
           }}
+          className="hero-bg-video"
         >
-          <source src={APP_CONFIG.assets.heroVideoUrl} type="video/mp4" />
-          <source src={APP_CONFIG.assets.heroVideoFallbackUrl} type="video/mp4" />
+          <source src={heroVideo} type="video/mp4" />
+          <source src="/assets/vlsi_vd.mp4" type="video/mp4" />
+          <source src="/vlsi_vd.mp4" type="video/mp4" />
         </video>
-
-        {/* Subtle, Readable Dark Sky-Blue/Navy Gradient Overlay (Optimized for left readability) */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(90deg, rgba(8, 47, 73, 0.94) 0%, rgba(8, 47, 73, 0.88) 45%, rgba(14, 165, 233, 0.45) 100%)',
-            zIndex: 2,
-            backdropFilter: 'blur(1px)'
-          }}
-        />
 
         {/* Hero Content Container - ALL TEXT ON LEFT SIDE */}
         <div
-          className="container"
+          className="container hero-animate-title"
           style={{
             position: 'relative',
             zIndex: 10,
-            paddingTop: '64px',
+            paddingTop: 'clamp(48px, 7.5vw, 68px)',
             paddingBottom: '20px',
             display: 'flex',
             flexDirection: 'column',
@@ -179,29 +184,30 @@ export const HomePage = () => {
               gap: '8px',
               padding: '6px 14px',
               borderRadius: '9999px',
-              backgroundColor: 'rgba(255, 255, 255, 0.12)',
+              backgroundColor: 'rgba(15, 23, 42, 0.6)',
               backdropFilter: 'blur(8px)',
               border: '1px solid rgba(255, 255, 255, 0.25)',
               color: '#38bdf8',
               fontSize: '0.825rem',
               fontWeight: '700',
               letterSpacing: '0.04em',
-              marginBottom: '20px'
+              marginBottom: '20px',
+              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)'
             }}
           >
             <Sparkles size={15} color="#38bdf8" />
-            <span style={{ color: '#ffffff' }}>DAILY VLSI TUTORIALS ON YOUTUBE</span>
+            <span style={{ color: '#ffffff', textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)' }}>DAILY VLSI TUTORIALS ON YOUTUBE</span>
           </div>
 
           {/* Heading with static "VLSI " and dynamic rotating synonyms */}
           <h1 style={{ marginBottom: '18px', maxWidth: '780px', width: '100%', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
-            <div style={{ fontSize: 'clamp(2.1rem, 6vw, 3.8rem)', fontWeight: 800, letterSpacing: '-0.02em', textShadow: '0 4px 20px rgba(0,0,0,0.5)', lineHeight: 1.15 }}>
+            <div style={{ fontSize: 'clamp(2.1rem, 6vw, 3.8rem)', fontWeight: 800, letterSpacing: '-0.02em', textShadow: '0 2px 12px rgba(0, 0, 0, 0.8), 0 4px 24px rgba(0, 0, 0, 0.6)', lineHeight: 1.15 }}>
               <TypingTitle
                 staticPrefix="VLSI "
                 words={['Simplified', 'Made Easy', 'Demystified', 'Design & Verification', 'Mastery']}
               />
             </div>
-            <div style={{ color: '#ffffff', fontSize: 'clamp(1.2rem, 3.2vw, 2.1rem)', fontWeight: 700, marginTop: '8px', textShadow: '0 2px 10px rgba(0,0,0,0.4)', lineHeight: 1.3 }}>
+            <div style={{ color: '#ffffff', fontSize: 'clamp(1.2rem, 3.2vw, 2.1rem)', fontWeight: 700, marginTop: '8px', textShadow: '0 2px 10px rgba(0, 0, 0, 0.8)', lineHeight: 1.3 }}>
               Master Digital Systems, Verilog & UVM
             </div>
           </h1>
@@ -211,10 +217,10 @@ export const HomePage = () => {
             style={{
               fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
               lineHeight: 1.7,
-              color: '#e0f2fe',
+              color: '#ffffff',
               marginBottom: '28px',
               maxWidth: '640px',
-              textShadow: '0 1px 4px rgba(0,0,0,0.4)'
+              textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)'
             }}
           >
             Daily VLSI tutorials, straight from the channel — Verilog, SystemVerilog, UVM, ASIC Design & Verification. Structured tracks designed for students and working engineers.
@@ -247,10 +253,11 @@ export const HomePage = () => {
               variant="outline"
               size="lg"
               style={{
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgba(15, 23, 42, 0.5)',
                 color: '#38bdf8',
                 borderColor: '#38bdf8',
-                backdropFilter: 'blur(4px)'
+                backdropFilter: 'blur(8px)',
+                textShadow: '0 1px 4px rgba(0, 0, 0, 0.7)'
               }}
               className="hero-explore-btn"
               onClick={handleScrollToCourses}
@@ -261,36 +268,36 @@ export const HomePage = () => {
 
           {/* 4 STATISTICS (RESPONSIVE 4-COL DESKTOP / 2X2 MOBILE GRID + ANIMATED COUNTER) */}
           <div className="stats-grid-responsive" style={{ marginTop: '12px', marginBottom: '20px' }}>
-            <div style={{ textAlign: 'left' }}>
+            <div style={{ textAlign: 'left', textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}>
               <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
                 <AnimatedCounter value={profile.totalClassesCount || profile.totalClasses || '700+'} />
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Free Tutorials</div>
-              <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>YouTube Video Classes</div>
+              <div style={{ fontSize: '0.775rem', color: '#e0f2fe' }}>YouTube Video Classes</div>
             </div>
 
-            <div style={{ textAlign: 'left' }}>
+            <div style={{ textAlign: 'left', textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}>
               <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
                 <AnimatedCounter value={profile.studentsCount || '5K+'} />
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Learners Taught</div>
-              <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Students & Engineers</div>
+              <div style={{ fontSize: '0.775rem', color: '#e0f2fe' }}>Students & Engineers</div>
             </div>
 
-            <div style={{ textAlign: 'left' }}>
+            <div style={{ textAlign: 'left', textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}>
               <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
                 <AnimatedCounter value={subjects.length > 0 ? `${subjects.length}` : '10+'} />
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>VLSI Topics</div>
-              <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Curated Domains</div>
+              <div style={{ fontSize: '0.775rem', color: '#e0f2fe' }}>Curated Domains</div>
             </div>
 
-            <div style={{ textAlign: 'left' }}>
+            <div style={{ textAlign: 'left', textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)' }}>
               <div style={{ fontSize: 'clamp(1.9rem, 4vw, 2.4rem)', fontWeight: 800, color: '#38bdf8', lineHeight: 1 }}>
                 <AnimatedCounter value="Live" />
               </div>
               <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '6px' }}>Workshops & Classes</div>
-              <div style={{ fontSize: '0.775rem', color: '#bae6fd' }}>Interactive Sessions</div>
+              <div style={{ fontSize: '0.775rem', color: '#e0f2fe' }}>Interactive Sessions</div>
             </div>
           </div>
 
@@ -299,14 +306,15 @@ export const HomePage = () => {
             style={{
               display: 'flex',
               gap: '24px',
-              color: '#bae6fd',
+              color: '#ffffff',
               fontSize: '0.875rem',
               fontWeight: 600,
               flexWrap: 'wrap',
               paddingTop: '16px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.25)',
               width: '100%',
-              marginBottom: '28px'
+              marginBottom: '28px',
+              textShadow: '0 2px 6px rgba(0, 0, 0, 0.8)'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -1285,7 +1293,7 @@ export const HomePage = () => {
                     }}
                   >
                     <MessageCircle size={15} />
-                    <span>Chat on WhatsApp</span>
+                    <span>Chat on WhatsApp (+91 8143286575)</span>
                   </button>
                 </a>
               </div>
@@ -1293,10 +1301,59 @@ export const HomePage = () => {
               {/* Direct Links */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.9rem', color: '#475569', wordBreak: 'break-word' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <Mail size={18} color="#0ea5e9" style={{ flexShrink: 0 }} />
-                  <a href={`mailto:${profile.email || APP_CONFIG.contactEmail}`} style={{ color: '#0f172a', textDecoration: 'none' }}>
-                    {profile.email || APP_CONFIG.contactEmail}
+                  <MessageCircle size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                  <a href={APP_CONFIG.whatsappUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#0f172a', textDecoration: 'none', fontWeight: 600 }}>
+                    +91 8143286575 (WhatsApp)
                   </a>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <Mail size={18} color="#0ea5e9" style={{ flexShrink: 0 }} />
+                  <a
+                    href={`mailto:sanathrtldv@gmail.com`}
+                    style={{ color: '#0f172a', textDecoration: 'none', fontWeight: 700 }}
+                  >
+                    sanathrtldv@gmail.com
+                  </a>
+                  <div style={{ display: 'inline-flex', gap: '6px', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText('sanathrtldv@gmail.com');
+                        showSuccess('Copied sanathrtldv@gmail.com to clipboard!');
+                      }}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        backgroundColor: '#f1f5f9',
+                        color: '#334155',
+                        borderRadius: '6px',
+                        border: '1px solid #cbd5e1',
+                        cursor: 'pointer'
+                      }}
+                      title="Copy email to clipboard"
+                    >
+                      Copy
+                    </button>
+                    <a
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=sanathrtldv@gmail.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        backgroundColor: '#f0f9ff',
+                        color: '#0284c7',
+                        borderRadius: '6px',
+                        border: '1px solid #bae6fd',
+                        textDecoration: 'none'
+                      }}
+                      title="Compose in Gmail (browser)"
+                    >
+                      Open Gmail
+                    </a>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Youtube size={18} color="#ff0000" style={{ flexShrink: 0 }} />

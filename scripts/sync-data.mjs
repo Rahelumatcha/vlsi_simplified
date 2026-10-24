@@ -262,6 +262,11 @@ async function sync() {
     // 4. Fetch Trainer Profile
     const rawTrainer = await fetchFromAppsScript(apiUrl, 'getTrainerProfile');
     validateTrainer(rawTrainer);
+    if (!rawTrainer.email || rawTrainer.email === 'sanath@gmail.com' || rawTrainer.email === 'trainer@vlsisimplified.com') {
+      rawTrainer.email = 'sanathrtldv@gmail.com';
+    }
+    rawTrainer.whatsapp = rawTrainer.whatsapp || '8143286575';
+    rawTrainer.whatsappDisplay = rawTrainer.whatsappDisplay || '+91 8143286575';
     console.log(`✓ Trainer profile synced (${rawTrainer.trainerName})`);
 
     // ATOMIC WRITE: Write files ONLY after all 4 datasets are successfully validated!

@@ -26,6 +26,19 @@ const CACHE_PREFIX = 'vlsi_pub_cache_';
 const MEMORY_CACHE = new Map();
 const inFlightRequests = new Map();
 
+function sanitizeTrainer(profile) {
+  if (!profile || typeof profile !== 'object') return staticTrainer || {};
+  const email = profile.email;
+  const isOutdated = !email || email === 'sanath@gmail.com' || email.includes('trainer@vlsisimplified.com');
+  return {
+    ...profile,
+    email: isOutdated ? 'sanathrtldv@gmail.com' : email,
+    whatsapp: profile.whatsapp || '8143286575',
+    whatsappDisplay: profile.whatsappDisplay || '+91 8143286575',
+    whatsappUrl: profile.whatsappUrl || 'https://wa.me/918143286575'
+  };
+}
+
 /**
  * Safely read cached entry from localStorage with in-memory fallback
  */
@@ -194,9 +207,9 @@ export const publicDataService = {
   getCachedTrainer() {
     const entry = getCacheEntry('trainer');
     if (entry && entry.data && typeof entry.data === 'object') {
-      return entry.data;
+      return sanitizeTrainer(entry.data);
     }
-    return staticTrainer || {};
+    return sanitizeTrainer(staticTrainer);
   },
 
   // --------------------------------------------------------------------------
@@ -349,23 +362,24 @@ export const publicDataService = {
     const isFresh = entry && Date.now() - entry.timestamp < PUBLIC_DATA_CACHE_TTL;
 
     if (!forceRefresh && isFresh && entry.data) {
-      return entry.data;
+      return sanitizeTrainer(entry.data);
     }
 
     return deduplicatedFetch('trainer', async () => {
       try {
         const raw = await fetchPublicAction('getTrainerProfile');
         if (raw && typeof raw === 'object') {
-          setCacheEntry('trainer', raw);
-          return raw;
+          const sanitized = sanitizeTrainer(raw);
+          setCacheEntry('trainer', sanitized);
+          return sanitized;
         }
         throw new Error('Trainer profile data invalid.');
       } catch (err) {
         console.warn('[publicDataService] Failed to fetch trainer profile. Using cached/static fallback.', err.message);
         if (entry && entry.data) {
-          return entry.data;
+          return sanitizeTrainer(entry.data);
         }
-        return staticTrainer || {};
+        return sanitizeTrainer(staticTrainer);
       }
     });
   },

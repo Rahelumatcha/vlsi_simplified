@@ -23,23 +23,25 @@ export const APP_CONFIG = {
   appName: 'VLSI Simplified',
   tagline: 'Daily VLSI tutorials, straight from the channel — Verilog, SystemVerilog, UVM, ASIC Design & Verification.',
   youtubeChannel: 'https://www.youtube.com/@VLSI_Simlified',
-  whatsappNumber: 'YOUR_WHATSAPP_NUMBER', // Replace with trainer's phone number e.g. "919876543210"
+  whatsappNumber: '918143286575',
+  whatsappDisplayNumber: '+91 8143286575',
   get whatsappUrl() {
-    return this.whatsappNumber && this.whatsappNumber !== 'YOUR_WHATSAPP_NUMBER'
+    return this.whatsappNumber
       ? `https://wa.me/${this.whatsappNumber.replace(/[^0-9]/g, '')}`
-      : 'https://wa.me/YOUR_NUMBER';
+      : 'https://wa.me/918143286575';
   },
-  contactEmail: 'trainer@vlsisimplified.com',
-  linkedinProfile: 'https://linkedin.com/in/vlsi-educator',
+  contactEmail: 'sanathrtldv@gmail.com',
+  gmailComposeUrl: 'https://mail.google.com/mail/?view=cm&fs=1&to=sanathrtldv@gmail.com',
+  linkedinProfile: 'https://linkedin.com/in/rtldv/',
 
   // Placeholder Asset references (Easy to replace later)
   assets: {
     logoPlaceholder: '/logo.png',
     trainerPhoto: '/sanath.png',
-    // Public video path: drop your "trainer-intro.mp4" into public/videos/
-    heroVideoUrl: '/videos/trainer-intro.mp4',
-    heroVideoFallbackUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    heroVideoPoster: 'https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&w=1200&q=80',
+    // Background hero video (16:9 ratio) from assets folder
+    heroVideoUrl: '/assets/vlsi_vd.mp4',
+    heroVideoFallbackUrl: '/vlsi_vd.mp4',
+    heroVideoPoster: '', // Removed default image so only video plays on load/refresh
     defaultSubjectThumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'
   }
 };

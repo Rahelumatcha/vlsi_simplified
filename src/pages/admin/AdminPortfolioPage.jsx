@@ -24,7 +24,8 @@ export const AdminPortfolioPage = () => {
     teachingPhilosophy: '',
     studentsCount: '',
     totalClassesCount: '',
-    email: '',
+    email: 'sanathrtldv@gmail.com',
+    whatsapp: '8143286575',
     youtube: '',
     linkedin: ''
   });
@@ -57,7 +58,8 @@ export const AdminPortfolioPage = () => {
             teachingPhilosophy: data.teachingPhilosophy || '',
             studentsCount: data.studentsCount || '15,000+',
             totalClassesCount: data.totalClassesCount || '100+',
-            email: data.email || '',
+            email: data.email || 'sanathrtldv@gmail.com',
+            whatsapp: data.whatsapp || data.whatsappNumber || '8143286575',
             youtube: data.youtube || '',
             linkedin: data.linkedin || ''
           });
@@ -519,7 +521,27 @@ export const AdminPortfolioPage = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="e.g. contact@vlsisimplified.com"
+                placeholder="e.g. sanathrtldv@gmail.com"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  border: '1.5px solid #cbd5e1',
+                  outline: 'none'
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
+                WhatsApp Number
+              </label>
+              <input
+                type="text"
+                name="whatsapp"
+                value={formData.whatsapp}
+                onChange={handleChange}
+                placeholder="e.g. 8143286575"
                 style={{
                   width: '100%',
                   padding: '10px 14px',

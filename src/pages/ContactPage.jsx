@@ -119,7 +119,7 @@ export const ContactPage = () => {
                   <MessageCircle size={22} color="#16a34a" />
                   <div>
                     <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#166534', display: 'block' }}>
-                      Chat on WhatsApp
+                      Chat on WhatsApp (+91 8143286575)
                     </span>
                     <span style={{ fontSize: '0.75rem', color: '#15803d' }}>Instant query response</span>
                   </div>
@@ -155,6 +155,37 @@ export const ContactPage = () => {
                       width: '40px',
                       height: '40px',
                       borderRadius: '10px',
+                      backgroundColor: '#f0fdf4',
+                      color: '#16a34a',
+                      border: '1px solid #bbf7d0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <MessageCircle size={18} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', textTransform: 'uppercase', fontWeight: 600 }}>
+                      WhatsApp & Mobile
+                    </span>
+                    <a
+                      href={APP_CONFIG.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.925rem' }}
+                    >
+                      +91 8143286575
+                    </a>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
                       backgroundColor: '#f0f9ff',
                       color: '#0ea5e9',
                       border: '1px solid #bae6fd',
@@ -165,16 +196,56 @@ export const ContactPage = () => {
                   >
                     <Mail size={18} />
                   </div>
-                  <div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block', textTransform: 'uppercase', fontWeight: 600 }}>
                       Email
                     </span>
-                    <a
-                      href={`mailto:${profile.email || APP_CONFIG.contactEmail}`}
-                      style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.925rem' }}
-                    >
-                      {profile.email || APP_CONFIG.contactEmail}
-                    </a>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
+                      <a
+                        href="mailto:sanathrtldv@gmail.com"
+                        style={{ color: '#0f172a', fontWeight: 700, fontSize: '0.925rem' }}
+                      >
+                        sanathrtldv@gmail.com
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText('sanathrtldv@gmail.com');
+                          showSuccess('Copied sanathrtldv@gmail.com to clipboard!');
+                        }}
+                        style={{
+                          padding: '2px 8px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          backgroundColor: '#f1f5f9',
+                          color: '#334155',
+                          borderRadius: '6px',
+                          border: '1px solid #cbd5e1',
+                          cursor: 'pointer'
+                        }}
+                        title="Copy email to clipboard"
+                      >
+                        Copy
+                      </button>
+                      <a
+                        href="https://mail.google.com/mail/?view=cm&fs=1&to=sanathrtldv@gmail.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          padding: '2px 8px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          backgroundColor: '#f0f9ff',
+                          color: '#0284c7',
+                          borderRadius: '6px',
+                          border: '1px solid #bae6fd',
+                          textDecoration: 'none'
+                        }}
+                        title="Compose directly in Gmail (browser)"
+                      >
+                        Open Gmail
+                      </a>
+                    </div>
                   </div>
                 </div>
 

@@ -15,6 +15,7 @@ import {
   Mail,
   Youtube,
   Linkedin,
+  MessageCircle,
   Sparkles
 } from 'lucide-react';
 import { portfolioService } from '../services/portfolioService';
@@ -54,7 +55,10 @@ export const AboutPage = () => {
     return <LoadingSpinner message="Loading trainer profile..." />;
   }
 
-  const p = profile || {};
+  const p = {
+    ...profile,
+    email: (profile && profile.email && profile.email !== 'sanath@gmail.com') ? profile.email : 'sanathrtldv@gmail.com'
+  };
 
   return (
     <div style={{ padding: '48px 0 80px', display: 'flex', flexDirection: 'column', gap: '56px' }}>
@@ -153,6 +157,11 @@ export const AboutPage = () => {
                   </Button>
                 </a>
               )}
+              <a href={APP_CONFIG.whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" icon={MessageCircle} style={{ color: '#16a34a', borderColor: '#86efac' }}>
+                  WhatsApp (+91 8143286575)
+                </Button>
+              </a>
             </div>
           </div>
 

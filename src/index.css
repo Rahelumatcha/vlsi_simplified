@@ -333,16 +333,31 @@ img, video {
   height: auto;
 }
 
-/* Hero Video Height Scaling */
+/* Hero Video Styling - Clean 16:9 ratio, uncropped (contain) and dimmed for text readability */
+.hero-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  opacity: 1 !important;
+  filter: brightness(0.44) !important;
+  z-index: 0 !important;
+  pointer-events: none;
+}
+
+/* Hero Video Height Scaling for 16:9 aspect ratio */
 @media (max-width: 768px) {
   .hero-video-section {
-    min-height: 600px !important;
+    min-height: 560px !important;
   }
 }
 
 @media (max-width: 480px) {
   .hero-video-section {
-    min-height: 540px !important;
+    min-height: 500px !important;
   }
 }
 
@@ -353,6 +368,10 @@ img, video {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .hero-bg-video {
+    display: none !important;
   }
 
   .scroll-reveal {
