@@ -275,7 +275,7 @@ export const YouTubeSubscribeAnimation = ({ channelUrl }) => {
                   </span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>
-                  @VLSI_Simlified • <span style={{ color: '#0284c7', fontWeight: 700 }}>15K subscribers</span>
+                  @VLSI_Simlified • <span style={{ color: '#0284c7', fontWeight: 700 }}>3.41K subscribers</span>
                 </div>
               </div>
             </div>
