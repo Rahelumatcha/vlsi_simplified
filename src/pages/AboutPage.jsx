@@ -171,17 +171,18 @@ export const AboutPage = () => {
               style={{
                 width: '100%',
                 maxWidth: '360px',
-                aspectRatio: '1 / 1',
+                aspectRatio: '4 / 5',
                 borderRadius: '20px',
                 overflow: 'hidden',
                 boxShadow: '0 12px 30px rgba(14, 165, 233, 0.15)',
-                border: '4px solid #f0f9ff'
+                border: '4px solid #f0f9ff',
+                backgroundColor: '#f8fafc'
               }}
             >
               <img
                 src={p.profileImage || APP_CONFIG.assets.trainerPhoto}
                 alt={p.trainerName}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
                 onError={(e) => {
                   e.target.src = APP_CONFIG.assets.trainerPhoto;
                 }}

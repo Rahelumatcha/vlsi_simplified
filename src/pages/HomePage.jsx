@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Youtube,
@@ -30,6 +30,8 @@ import { Button } from '../components/common/Button';
 import { SubjectCard } from '../components/courses/SubjectCard';
 import { QuizCard } from '../components/quiz/QuizCard';
 import { SubjectQuizCard } from '../components/quiz/SubjectQuizCard';
+import { YouTubeSubscribeAnimation } from '../components/home/YouTubeSubscribeAnimation';
+import { emailService } from '../services/emailService';
 import { courseService } from '../services/courseService';
 import { quizService } from '../services/quizService';
 import { portfolioService } from '../services/portfolioService';
@@ -70,7 +72,10 @@ export const HomePage = () => {
   // Contact form state
   const [contactData, setContactData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [contactSubmitted, setContactSubmitted] = useState(false);
-  const { showSuccess } = useToast();
+  const [contactSending, setContactSending] = useState(false);
+  const [contactError, setContactError] = useState('');
+  const contactFormRef = useRef(null);
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     const refreshHomeData = async () => {
@@ -101,13 +106,51 @@ export const HomePage = () => {
     refreshHomeData();
   }, []);
 
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
-    if (!contactData.name.trim() || !contactData.email.trim() || !contactData.message.trim()) {
+
+    const name = contactData.name.trim();
+    const email = contactData.email.trim();
+    const message = contactData.message.trim();
+
+    if (!name) {
+      showError('Please enter your name.');
       return;
     }
-    setContactSubmitted(true);
-    showSuccess('Thank you! Your message is ready for future email integration.');
+    if (!email) {
+      showError('Please enter your email address.');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showError('Please enter a valid email address.');
+      return;
+    }
+    if (!message) {
+      showError('Please enter your message.');
+      return;
+    }
+
+    setContactSending(true);
+    setContactError('');
+
+    try {
+      const formEl = contactFormRef.current || e.currentTarget;
+      await emailService.sendContactForm(formEl);
+      setContactSubmitted(true);
+      showSuccess('Thank you! Your message has been sent successfully.');
+      setContactData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('EmailJS submission error:', err);
+      const errorMsg =
+        err?.text ||
+        err?.message ||
+        'Failed to send message. Please try again or reach out directly on WhatsApp.';
+      setContactError(errorMsg);
+      showError(errorMsg);
+    } finally {
+      setContactSending(false);
+    }
   };
 
   const handleScrollToCourses = () => {
@@ -361,17 +404,18 @@ export const HomePage = () => {
                 position: 'relative',
                 width: '100%',
                 maxWidth: '360px',
-                aspectRatio: '1 / 1',
+                aspectRatio: '4 / 5',
                 borderRadius: '24px',
                 overflow: 'hidden',
                 border: '4px solid #f0f9ff',
-                boxShadow: '0 16px 36px rgba(14, 165, 233, 0.18)'
+                boxShadow: '0 16px 36px rgba(14, 165, 233, 0.18)',
+                backgroundColor: '#f8fafc'
               }}
             >
               <img
                 src={profile.profileImage || APP_CONFIG.assets.trainerPhoto}
                 alt={profile.trainerName || 'VLSI Trainer'}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }}
                 onError={(e) => {
                   e.target.src = APP_CONFIG.assets.trainerPhoto;
                 }}
@@ -1005,60 +1049,11 @@ export const HomePage = () => {
 
 
       {/* ========================================================================= */}
-      {/* 7. YOUTUBE CTA BANNER                                                     */}
+      {/* 7. YOUTUBE CTA BANNER (3D PERSON CLICK SUBSCRIBE ANIMATION)               */}
       {/* ========================================================================= */}
       <section className="container">
         <ScrollReveal direction="up">
-          <div
-            style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '24px',
-              padding: 'clamp(32px, 5vw, 52px) clamp(20px, 4vw, 40px)',
-              border: '2px solid #bae6fd',
-              boxShadow: '0 12px 32px rgba(14, 165, 233, 0.08)',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              background: 'linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%)'
-            }}
-          >
-            <div
-              style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '50%',
-                backgroundColor: '#ff0000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#ffffff',
-                marginBottom: '20px',
-                boxShadow: '0 6px 20px rgba(255, 0, 0, 0.35)'
-              }}
-            >
-              <Youtube size={34} />
-            </div>
-
-            <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.35rem)', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>
-              Learn with Us on YouTube
-            </h2>
-
-            <p style={{ color: '#475569', fontSize: 'clamp(0.95rem, 1.8vw, 1.05rem)', maxWidth: '600px', lineHeight: 1.6, marginBottom: '28px' }}>
-              Subscribe to <strong>@VLSI_Simlified</strong> for daily tutorial updates, architecture walkthroughs, and industry interview series.
-            </p>
-
-            <a
-              href={profile.youtube || APP_CONFIG.youtubeChannel}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: 'none' }}
-            >
-              <Button variant="youtube" size="lg" icon={Youtube}>
-                Subscribe on YouTube
-              </Button>
-            </a>
-          </div>
+          <YouTubeSubscribeAnimation channelUrl={profile.youtube || APP_CONFIG.youtubeChannel} />
         </ScrollReveal>
       </section>
 
@@ -1246,17 +1241,33 @@ export const HomePage = () => {
                 >
                   <CheckCircle2 size={40} color="#0ea5e9" style={{ margin: '0 auto 12px' }} />
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', marginBottom: '8px' }}>
-                    Message Received!
+                    Message Sent Successfully!
                   </h3>
                   <p style={{ color: '#475569', fontSize: '0.9rem', marginBottom: '18px' }}>
-                    Thank you for reaching out. We will get back to you shortly.
+                    Thank you for reaching out. The trainer has received your inquiry and will respond shortly.
                   </p>
                   <Button variant="outline" size="sm" onClick={() => setContactSubmitted(false)}>
                     Send Another Message
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <form ref={contactFormRef} onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {contactError && (
+                    <div
+                      style={{
+                        padding: '10px 14px',
+                        backgroundColor: '#fef2f2',
+                        border: '1.5px solid #fecaca',
+                        borderRadius: '8px',
+                        color: '#b91c1c',
+                        fontSize: '0.85rem',
+                        lineHeight: 1.5
+                      }}
+                    >
+                      {contactError}
+                    </div>
+                  )}
+
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: '12px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
@@ -1264,7 +1275,9 @@ export const HomePage = () => {
                       </label>
                       <input
                         type="text"
+                        name="name"
                         required
+                        disabled={contactSending}
                         value={contactData.name}
                         onChange={(e) => setContactData({ ...contactData, name: e.target.value })}
                         placeholder="Your Full Name"
@@ -1273,7 +1286,8 @@ export const HomePage = () => {
                           padding: '10px 12px',
                           borderRadius: '8px',
                           border: '1.5px solid #cbd5e1',
-                          outline: 'none'
+                          outline: 'none',
+                          backgroundColor: contactSending ? '#f8fafc' : '#ffffff'
                         }}
                       />
                     </div>
@@ -1284,7 +1298,9 @@ export const HomePage = () => {
                       </label>
                       <input
                         type="email"
+                        name="email"
                         required
+                        disabled={contactSending}
                         value={contactData.email}
                         onChange={(e) => setContactData({ ...contactData, email: e.target.value })}
                         placeholder="name@domain.com"
@@ -1293,7 +1309,8 @@ export const HomePage = () => {
                           padding: '10px 12px',
                           borderRadius: '8px',
                           border: '1.5px solid #cbd5e1',
-                          outline: 'none'
+                          outline: 'none',
+                          backgroundColor: contactSending ? '#f8fafc' : '#ffffff'
                         }}
                       />
                     </div>
@@ -1306,6 +1323,8 @@ export const HomePage = () => {
                       </label>
                       <input
                         type="tel"
+                        name="phone"
+                        disabled={contactSending}
                         value={contactData.phone}
                         onChange={(e) => setContactData({ ...contactData, phone: e.target.value })}
                         placeholder="+91..."
@@ -1314,7 +1333,8 @@ export const HomePage = () => {
                           padding: '10px 12px',
                           borderRadius: '8px',
                           border: '1.5px solid #cbd5e1',
-                          outline: 'none'
+                          outline: 'none',
+                          backgroundColor: contactSending ? '#f8fafc' : '#ffffff'
                         }}
                       />
                     </div>
@@ -1325,6 +1345,8 @@ export const HomePage = () => {
                       </label>
                       <input
                         type="text"
+                        name="subject"
+                        disabled={contactSending}
                         value={contactData.subject}
                         onChange={(e) => setContactData({ ...contactData, subject: e.target.value })}
                         placeholder="Course query, workshop, etc."
@@ -1333,7 +1355,8 @@ export const HomePage = () => {
                           padding: '10px 12px',
                           borderRadius: '8px',
                           border: '1.5px solid #cbd5e1',
-                          outline: 'none'
+                          outline: 'none',
+                          backgroundColor: contactSending ? '#f8fafc' : '#ffffff'
                         }}
                       />
                     </div>
@@ -1344,8 +1367,10 @@ export const HomePage = () => {
                       Message *
                     </label>
                     <textarea
+                      name="message"
                       required
                       rows={4}
+                      disabled={contactSending}
                       value={contactData.message}
                       onChange={(e) => setContactData({ ...contactData, message: e.target.value })}
                       placeholder="Write your question or request..."
@@ -1355,13 +1380,22 @@ export const HomePage = () => {
                         borderRadius: '8px',
                         border: '1.5px solid #cbd5e1',
                         outline: 'none',
-                        resize: 'vertical'
+                        resize: 'vertical',
+                        backgroundColor: contactSending ? '#f8fafc' : '#ffffff'
                       }}
                     />
                   </div>
 
-                  <Button type="submit" variant="primary" size="md" icon={Send} style={{ alignSelf: 'flex-start' }}>
-                    Send Message
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="md"
+                    icon={Send}
+                    loading={contactSending}
+                    disabled={contactSending}
+                    style={{ alignSelf: 'flex-start' }}
+                  >
+                    {contactSending ? 'Sending Message...' : 'Send Message'}
                   </Button>
                 </form>
               )}

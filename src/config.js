@@ -45,3 +45,10 @@ export const APP_CONFIG = {
     defaultSubjectThumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80'
   }
 };
+
+// EmailJS Configuration for Direct Frontend Delivery
+export const EMAILJS_CONFIG = {
+  serviceId: (import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_j9mgr66').trim(),
+  templateId: (import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_uswyqno').trim(),
+  publicKey: (import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'MKXFPbpt61e-hrlgD').trim()
+};

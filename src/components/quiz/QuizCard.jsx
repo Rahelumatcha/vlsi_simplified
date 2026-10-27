@@ -149,18 +149,6 @@ export const QuizCard = ({ quiz, subjectName = 'VLSI Curriculum' }) => {
         <span>Start Quiz</span>
         <ArrowRight size={15} />
       </Link>
-
-      <style>{`
-        .quiz-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 28px rgba(14, 165, 233, 0.14) !important;
-          border-color: #38bdf8 !important;
-        }
-        .start-quiz-btn:hover {
-          background-color: #0284c7;
-          transform: translateX(2px);
-        }
-      `}</style>
     </div>
   );
 };

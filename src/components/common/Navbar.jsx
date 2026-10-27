@@ -87,8 +87,11 @@ export const Navbar = () => {
   return (
     <header
       style={{
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
         zIndex: 1000,
         backgroundColor: scrolled ? 'rgba(255, 255, 255, 0.96)' : 'rgba(255, 255, 255, 0.92)',
         backdropFilter: 'blur(12px)',
@@ -348,7 +351,9 @@ export const Navbar = () => {
             flexDirection: 'column',
             gap: '6px',
             boxShadow: '0 16px 32px rgba(14, 165, 233, 0.12)',
-            animation: 'slideDownDrawer 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+            animation: 'slideDownDrawer 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            maxHeight: 'calc(100vh - 52px)',
+            overflowY: 'auto'
           }}
           className="mobile-drawer"
         >

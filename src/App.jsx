@@ -35,7 +35,7 @@ const PublicLayout = ({ children }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Navbar />
-      <main style={{ flex: 1 }}>{children}</main>
+      <main style={{ flex: 1, paddingTop: '53px' }}>{children}</main>
       <Footer />
       <FloatingWhatsApp />
     </div>

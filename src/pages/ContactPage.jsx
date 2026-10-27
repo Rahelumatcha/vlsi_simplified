@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Mail, Youtube, Linkedin, Send, MessageCircle, CheckCircle2, Phone } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { ScrollReveal } from '../components/common/ScrollReveal';
@@ -6,9 +6,10 @@ import { APP_CONFIG } from '../config';
 import { useToast } from '../contexts/ToastContext';
 import { portfolioService } from '../services/portfolioService';
 import { publicDataService } from '../services/publicDataService';
+import { emailService } from '../services/emailService';
 
 export const ContactPage = () => {
-  const { showSuccess } = useToast();
+  const { showSuccess, showError } = useToast();
   const [profile, setProfile] = useState(() => publicDataService.getCachedTrainer());
   const [formData, setFormData] = useState({
     name: '',
@@ -18,6 +19,9 @@ export const ContactPage = () => {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const formRef = useRef(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -31,13 +35,51 @@ export const ContactPage = () => {
     fetchProfile();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const message = formData.message.trim();
+
+    if (!name) {
+      showError('Please enter your full name.');
       return;
     }
-    setSubmitted(true);
-    showSuccess('Thank you! Your message has been logged for response.');
+    if (!email) {
+      showError('Please enter your email address.');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showError('Please enter a valid email address.');
+      return;
+    }
+    if (!message) {
+      showError('Please enter your message.');
+      return;
+    }
+
+    setSending(true);
+    setErrorMessage('');
+
+    try {
+      const formEl = formRef.current || e.currentTarget;
+      await emailService.sendContactForm(formEl);
+      setSubmitted(true);
+      showSuccess('Thank you! Your message has been sent successfully.');
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('EmailJS submission error:', err);
+      const errorMsg =
+        err?.text ||
+        err?.message ||
+        'Failed to send message. Please try again or reach out directly on WhatsApp.';
+      setErrorMessage(errorMsg);
+      showError(errorMsg);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -361,20 +403,36 @@ export const ContactPage = () => {
                   <CheckCircle2 size={32} />
                 </div>
                 <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                  Message Received!
+                  Message Sent Successfully!
                 </h3>
                 <p style={{ color: '#475569', fontSize: '0.925rem', maxWidth: '360px' }}>
-                  Thank you for reaching out. The trainer will review your message and reply via email.
+                  Thank you for reaching out. The trainer will review your message and reply via email shortly.
                 </p>
                 <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
                   Send Another Message
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <form ref={formRef} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>
                   Send an Inquiry
                 </h3>
+
+                {errorMessage && (
+                  <div
+                    style={{
+                      padding: '10px 14px',
+                      backgroundColor: '#fef2f2',
+                      border: '1.5px solid #fecaca',
+                      borderRadius: '8px',
+                      color: '#b91c1c',
+                      fontSize: '0.85rem',
+                      lineHeight: 1.5
+                    }}
+                  >
+                    {errorMessage}
+                  </div>
+                )}
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
@@ -382,7 +440,9 @@ export const ContactPage = () => {
                   </label>
                   <input
                     type="text"
+                    name="name"
                     required
+                    disabled={sending}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Rahul Verma"
@@ -391,7 +451,8 @@ export const ContactPage = () => {
                       padding: '10px 14px',
                       borderRadius: '8px',
                       border: '1.5px solid #cbd5e1',
-                      outline: 'none'
+                      outline: 'none',
+                      backgroundColor: sending ? '#f8fafc' : '#ffffff'
                     }}
                   />
                 </div>
@@ -402,7 +463,9 @@ export const ContactPage = () => {
                   </label>
                   <input
                     type="email"
+                    name="email"
                     required
+                    disabled={sending}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="rahul@domain.com"
@@ -411,7 +474,8 @@ export const ContactPage = () => {
                       padding: '10px 14px',
                       borderRadius: '8px',
                       border: '1.5px solid #cbd5e1',
-                      outline: 'none'
+                      outline: 'none',
+                      backgroundColor: sending ? '#f8fafc' : '#ffffff'
                     }}
                   />
                 </div>
@@ -422,6 +486,8 @@ export const ContactPage = () => {
                   </label>
                   <input
                     type="tel"
+                    name="phone"
+                    disabled={sending}
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91..."
@@ -430,7 +496,8 @@ export const ContactPage = () => {
                       padding: '10px 14px',
                       borderRadius: '8px',
                       border: '1.5px solid #cbd5e1',
-                      outline: 'none'
+                      outline: 'none',
+                      backgroundColor: sending ? '#f8fafc' : '#ffffff'
                     }}
                   />
                 </div>
@@ -441,6 +508,8 @@ export const ContactPage = () => {
                   </label>
                   <input
                     type="text"
+                    name="subject"
+                    disabled={sending}
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="Course question, workshop inquiry..."
@@ -449,7 +518,8 @@ export const ContactPage = () => {
                       padding: '10px 14px',
                       borderRadius: '8px',
                       border: '1.5px solid #cbd5e1',
-                      outline: 'none'
+                      outline: 'none',
+                      backgroundColor: sending ? '#f8fafc' : '#ffffff'
                     }}
                   />
                 </div>
@@ -459,8 +529,10 @@ export const ContactPage = () => {
                     Message *
                   </label>
                   <textarea
+                    name="message"
                     required
                     rows={4}
+                    disabled={sending}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Type your message here..."
@@ -470,7 +542,8 @@ export const ContactPage = () => {
                       borderRadius: '8px',
                       border: '1.5px solid #cbd5e1',
                       outline: 'none',
-                      resize: 'vertical'
+                      resize: 'vertical',
+                      backgroundColor: sending ? '#f8fafc' : '#ffffff'
                     }}
                   />
                 </div>
@@ -480,9 +553,11 @@ export const ContactPage = () => {
                   variant="primary"
                   size="md"
                   icon={Send}
+                  loading={sending}
+                  disabled={sending}
                   style={{ marginTop: '8px' }}
                 >
-                  Send Message
+                  {sending ? 'Sending Message...' : 'Send Message'}
                 </Button>
               </form>
             )}

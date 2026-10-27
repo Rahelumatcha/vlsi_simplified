@@ -6,6 +6,10 @@
   padding: 0;
 }
 
+style, script, noscript, template {
+  display: none !important;
+}
+
 html {
   font-family: var(--font-sans);
   color: var(--text-main);
@@ -16,7 +20,7 @@ html {
   overflow-x: hidden;
 }
 
-/* Ensure sticky navbar never conceals section headings */
+/* Ensure fixed navbar never conceals section headings */
 section[id], div[id] {
   scroll-margin-top: 65px;
 }
@@ -120,13 +124,13 @@ input, textarea, select {
   align-items: stretch;
 }
 
-.grid-cards > * {
+.grid-cards > .scroll-reveal {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.grid-cards > * > * {
+.grid-cards > .scroll-reveal > * {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -152,17 +156,46 @@ input, textarea, select {
   align-items: stretch;
 }
 
-.grid-cards-4 > * {
+.grid-cards-4 > .scroll-reveal {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.grid-cards-4 > * > * {
+.grid-cards-4 > .scroll-reveal > * {
   flex: 1;
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+/* Card Hover States */
+.subject-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(14, 165, 233, 0.14) !important;
+  border-color: #38bdf8 !important;
+}
+.subject-card:hover .subject-img {
+  transform: scale(1.05);
+}
+.subject-card:hover .subject-explore-btn {
+  background-color: #0ea5e9;
+  color: #ffffff;
+  border-color: #0ea5e9;
+}
+.subject-yt-btn:hover {
+  background-color: #dc2626 !important;
+  transform: scale(1.03);
+}
+
+.quiz-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(14, 165, 233, 0.14) !important;
+  border-color: #38bdf8 !important;
+}
+.start-quiz-btn:hover {
+  background-color: #0284c7;
+  transform: translateX(2px);
 }
 
 /* Vertical Stack for Wide Horizontal Cards */
