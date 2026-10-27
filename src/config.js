@@ -37,7 +37,7 @@ export const APP_CONFIG = {
   // Placeholder Asset references (Easy to replace later)
   assets: {
     logoPlaceholder: '/logo.png',
-    trainerPhoto: '/sanath.png',
+    trainerPhoto: '/sanath.jpeg',
     // Background hero video (16:9 ratio) from assets folder
     heroVideoUrl: '/assets/vlsi_vd.mp4',
     heroVideoFallbackUrl: '/vlsi_vd.mp4',

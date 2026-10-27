@@ -16,7 +16,7 @@
  * ============================================================================
  */
 
-import { API_BASE_URL, isApiConfigured, PUBLIC_DATA_CACHE_TTL } from '../config';
+import { API_BASE_URL, APP_CONFIG, isApiConfigured, PUBLIC_DATA_CACHE_TTL } from '../config';
 import staticSubjects from '../data/subjects.json';
 import staticClasses from '../data/classes.json';
 import staticQuizzes from '../data/quizzes.json';
@@ -30,8 +30,12 @@ function sanitizeTrainer(profile) {
   if (!profile || typeof profile !== 'object') return staticTrainer || {};
   const email = profile.email;
   const isOutdated = !email || email === 'sanath@gmail.com' || email.includes('trainer@vlsisimplified.com');
+  const profileImage = (!profile.profileImage || profile.profileImage.includes('adcdgiinglds0hkgxlrl'))
+    ? (APP_CONFIG.assets.trainerPhoto || '/sanath.jpeg')
+    : profile.profileImage;
   return {
     ...profile,
+    profileImage,
     email: isOutdated ? 'sanathrtldv@gmail.com' : email,
     whatsapp: profile.whatsapp || '8143286575',
     whatsappDisplay: profile.whatsappDisplay || '+91 8143286575',

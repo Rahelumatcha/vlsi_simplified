@@ -265,6 +265,9 @@ async function sync() {
     if (!rawTrainer.email || rawTrainer.email === 'sanath@gmail.com' || rawTrainer.email === 'trainer@vlsisimplified.com') {
       rawTrainer.email = 'sanathrtldv@gmail.com';
     }
+    if (!rawTrainer.profileImage || rawTrainer.profileImage.includes('adcdgiinglds0hkgxlrl')) {
+      rawTrainer.profileImage = '/sanath.jpeg';
+    }
     rawTrainer.whatsapp = rawTrainer.whatsapp || '8143286575';
     rawTrainer.whatsappDisplay = rawTrainer.whatsappDisplay || '+91 8143286575';
     console.log(`✓ Trainer profile synced (${rawTrainer.trainerName})`);
